@@ -6,7 +6,7 @@
   "scripts": {
     "start": "electron ."
   },
-  "repository": "https://github.com/fyears/electron-python-example",
+  "repository": "https://github.com/gvargas3/fish-tracker",
   "keywords": [
     "Electron",
     "Python",
