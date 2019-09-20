@@ -1,6 +1,6 @@
 {
-  "name": "pretty-calculator",
-  "version": "1.0.1",
+  "name": "fish-tracker",
+  "version": "1.0.0",
   "description": "A minimal Electron and Python - based calculator ",
   "main": "main.js",
   "scripts": {
@@ -9,19 +9,19 @@
   "repository": "https://github.com/gvargas3/fish-tracker",
   "keywords": [
     "Electron",
-    "Python",
-    "zerorpc",
+    "quick",
+    "start",
+    "tutorial",
     "demo"
   ],
-  "author": "fyears",
-  "license": "MIT",
+  "author": "GitHub",
+  "license": "CC0-1.0",
   "dependencies": {
     "zerorpc": "git+https://github.com/fyears/zerorpc-node.git"
   },
   "devDependencies": {
-    "electron": "1.7.12",
-    "electron-packager": "11.0.0"
+    "electron": "^1.7.6",
+    "electron-packager": "^9.0.1",
+    "electron-rebuild": "^1.8.6"
   }
 }
-
-
