@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8">
     <title>Hello Calculator!</title>
+    <link rel="stylesheet" href="./css/site.css">
   </head>
   <body>
     <h1>Hello Calculator!</h1>
@@ -12,11 +13,21 @@
     <p>Input something like <code>1 + 1</code>.</p>
     <p>This calculator supports <code>+-*/^()</code>, 
     whitespaces, and integers and floating numbers.</p>
-    <button id="test-btn">Image test</button>
     <input id="formula" value="1 + 2.0 * 3.1 / (4 ^ 5.6)"></input>
     <div id="result"></div>
+    <br/><br/>
+    <div id="checkboxes">
+      <label>Choose a connection:</label>
+      <ul id="connection-holder">
+      </ul>
+    </div>
+    <button id="test-btn">Connections test</button>
   </body>
 
-  <script type="text/javascript" src="./renderer.js"></script>
-  <script type="text/javascript" src="Scripts/imagetest.js"></script>
+  <!-- Import all scripts here -->
+  <script>
+    window.$ = window.jQuery = require('./plugins/jquery-3.4.1.js');
+  </script>
+  <script type="text/javascript" src="renderer.js" type="text/javascript"></script>
+  <script type="text/javascript" src="scripts/imagetest.js" type="text/javascript"></script>
 </html>

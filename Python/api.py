@@ -1,6 +1,6 @@
 from __future__ import print_function
 from calc import calc as real_calc
-from imagetest import getImage as get_image
+from connectionstringtest import getConnections
 import sys
 import zerorpc
 
@@ -12,13 +12,14 @@ class CalcApi(object):
             return real_calc(text)
         except Exception as e:
             return 0.0    
-    def returnImage(self, text):
-        print('Calling python API')
+    def getConnections(self):
+        print('Calling python API connections')
         try:
-            return get_image(self)
+            return getConnections(self)
         except Exception as e:
             return 0.0
     def echo(self, text):
+        print('called Echo method')
         """echo any text"""
         return text
 
