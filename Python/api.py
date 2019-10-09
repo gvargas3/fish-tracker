@@ -1,5 +1,6 @@
 from __future__ import print_function
 from calc import calc as real_calc
+from imagetest import getImage as get_image
 import sys
 import zerorpc
 
@@ -7,9 +8,16 @@ class CalcApi(object):
     def calc(self, text):
         """based on the input text, return the int result"""
         try:
+            print('In calculator')
             return real_calc(text)
         except Exception as e:
             return 0.0    
+    def returnImage(self, text):
+        print('Calling python API')
+        try:
+            return get_image(self)
+        except Exception as e:
+            return 0.0
     def echo(self, text):
         """echo any text"""
         return text
