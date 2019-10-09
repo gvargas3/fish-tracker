@@ -1,6 +1,6 @@
 from __future__ import print_function
 from calc import calc as real_calc
-from connectionstringtest import getConnections
+import connectionstringtest as connection
 import sys
 import zerorpc
 
@@ -13,9 +13,13 @@ class CalcApi(object):
         except Exception as e:
             return 0.0    
     def getConnections(self):
-        print('Calling python API connections')
         try:
-            return getConnections(self)
+            return connection.getConnections(self)
+        except Exception as e:
+            return 0.0
+    def connectToBoard(self, connectionName):
+        try:
+            return connection.connect(self, connectionName)
         except Exception as e:
             return 0.0
     def echo(self, text):

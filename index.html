@@ -2,26 +2,30 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>Hello Calculator!</title>
     <link rel="stylesheet" href="./css/site.css">
   </head>
   <body>
-    <h1>Hello Calculator!</h1>
-    <p> We are using Node.js <script>document.write(process.versions.node)</script>,
-    Chromium <script>document.write(process.versions.chrome)</script>,
-    and Electron <script>document.write(process.versions.electron)</script>.</p>
-    <p>Input something like <code>1 + 1</code>.</p>
-    <p>This calculator supports <code>+-*/^()</code>, 
-    whitespaces, and integers and floating numbers.</p>
-    <input id="formula" value="1 + 2.0 * 3.1 / (4 ^ 5.6)"></input>
-    <div id="result"></div>
+    <div id="calculator">
+      <h1>Hello Calculator!</h1>
+      <p> We are using Node.js <script>document.write(process.versions.node)</script>,
+      Chromium <script>document.write(process.versions.chrome)</script>,
+      and Electron <script>document.write(process.versions.electron)</script>.</p>
+      <p>Input something like <code>1 + 1</code>.</p>
+      <p>This calculator supports <code>+-*/^()</code>, 
+      whitespaces, and integers and floating numbers.</p>
+      <input id="formula" value="1 + 2.0 * 3.1 / (4 ^ 5.6)"></input>
+      <div id="result"></div>
+    </div>
     <br/><br/>
     <div id="checkboxes">
       <label>Choose a connection:</label>
       <ul id="connection-holder">
       </ul>
+      <div id="connection-btn-holder">
+        <button id="getConnectionsTest-btn">Get Connections Test</button>
+        <button id="connectTest-btn" style="display: none;">Connect Test</button>
+      </div>
     </div>
-    <button id="test-btn">Connections test</button>
   </body>
 
   <!-- Import all scripts here -->
