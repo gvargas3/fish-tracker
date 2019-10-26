@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="./plugins/bootstrap-4.3.1-dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="./css/site.css">
+  </head>
+  <body>
+    <div class="container" id="checkboxes">
+      <label>Choose a connection:</label>
+      <ul id="connection-holder">
+      </ul>
+      <div id="connection-btn-holder">
+        <button id="getConnectionsTest-btn">Get Connections Test</button>
+        <button id="connectTest-btn" style="display: none;">Connect Test</button>
+      </div>
+    </div>
+  </body>
+
+  <!-- Import all scripts here -->
+  <script>
+    window.$ = window.jQuery = require('./plugins/jquery-3.4.1.js');
+  </script>
+  <script type="text/javascript" src="renderer.js"></script>
+  <script type="text/javascript" src="scripts/imagetest.js"></script>
+  <script type="text/javascript" src="plugins/bootstrap-4.3.1-dist/js/bootstrap.min.js"></script>
+</html>

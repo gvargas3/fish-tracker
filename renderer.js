@@ -10,17 +10,21 @@ client.invoke("echo", "server ready", (error, res) => {
   }
 })
 
-let formula = document.querySelector('#formula')
-let result = document.querySelector('#result')
+let formula = $('#formula')
+let result = $('#result')
 
-formula.addEventListener('input', () => {
-  client.invoke("calc", formula.value, (error, res) => {
-    if(error) {
-      console.error(error)
-    } else {
-      result.textContent = res
-    }
+if(formula.length > 0)
+{ 
+  formula.on('input', () => {
+    client.invoke("calc", formula.value, (error, res) => {
+      if(error) {
+        console.error(error)
+      } else {
+        result.textContent = res
+      }
+    })
   })
-})
+  
+  //formula.dispatchEvent(new Event('input'))
+} 
 
-formula.dispatchEvent(new Event('input'))
