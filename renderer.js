@@ -10,21 +10,25 @@ client.invoke("echo", "server ready", (error, res) => {
   }
 })
 
-let formula = $('#formula')
-let result = $('#result')
-
-if(formula.length > 0)
-{ 
-  formula.on('input', () => {
-    client.invoke("calc", formula.value, (error, res) => {
-      if(error) {
-        console.error(error)
-      } else {
-        result.textContent = res
-      }
-    })
-  })
+$(document).ready(function(){
+  // $.get('html/home.html', function(data, textStatus) {
+  //   if (textStatus == "success") {
+  //       // execute a success code
+  //       console.log("file loaded!");
+  //       console.log('content holder before:',$('#content-holder').html())
+  //       console.log(data)
+  //       $('#content-holder').html(data);
+  //       console.log('content holder after:',$('#content-holder').html())
+  //   }
+  //   else{
+  //     console.log("file NOT loaded!");
+  //   }
+  // });
   
-  //formula.dispatchEvent(new Event('input'))
-} 
+  
+  $('#content-holder').load('html/home.html', function(){
+    $('#content-holder').trigger('home-load');
+  });
+})
+
 
