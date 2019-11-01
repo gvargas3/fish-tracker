@@ -37,8 +37,8 @@ $('#alert-div').click(function()
     $('.nav-item').removeClass('active');
     $('#alert-div').addClass('active');
 
-    $('#content-holder').load('html/connections.html', function(){
-      $('#content-holder').trigger('connections-load');
+    $('#content-holder').load('html/completed-tests.html', function(){
+      $('#content-holder').trigger('completed-tests-load');
     });
 
     removeAlerts();
@@ -127,4 +127,33 @@ $('#content-holder').on('connections-load', function(){
   });
 });
 
+/******************************* Completed Tests functionality **************************************************************/
+$('#content-holder').on('completed-tests-load', function(){
+  saveCompletedTest();
+  // client.invoke("connectToBoard", selection.attr('string'), (error, message) => {
+  //   if(error) 
+  //   {
+  //     console.error(error)
+  //   } 
+  //   else 
+  //   {
+  //     console.log(message)
+  //   }
+  // });
+});
+
+/******************************* Saving completed tests **************************************************************/
+var saveCompletedTest = function()
+{
+  client.invoke("saveCompletedTest",  (error, message) => {
+    if(error) 
+    {
+      console.error(error)
+    } 
+    else 
+    {
+      console.log(message)
+    }
+  });
+}
 });
