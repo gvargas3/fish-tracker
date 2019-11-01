@@ -145,6 +145,18 @@ $('#content-holder').on('test-page-load', function(){
       console.log('filepath:',filepath)
       $('#screenshot').attr('src', filepath);
       initDraw($('#canvas'));
+
+      $('#submit-btn').on('click', function(){
+        if($('.rectangle').length > 0)
+        {
+          console.log('submit called')
+        }
+        else
+        {
+          $('#error').show();
+          $('#info').hide();
+        }
+      });
     }
   });
 });
@@ -170,8 +182,8 @@ var initDraw = function(canvas) {
       var ev = e || window.event; 
       if (ev.pageX) 
       { 
-        mouse.x = ev.pageX + window.pageXOffset;
-        mouse.y = ev.pageY + window.pageYOffset;
+        mouse.x = ev.pageX;
+        mouse.y = ev.pageY;
       } 
   };
 

@@ -1,7 +1,20 @@
 ul {
   list-style-type: none;
 }
-
+#content-holder{
+  margin-bottom: 2em;
+  margin-top: 2em;
+}
+.error-message{
+  color: red;
+  display: none;
+}
+.button-container{
+  padding-top: 1em;
+}
+.submit{
+  float: right;
+}
 /******* Nav Bar styling *********/
 .nav-item {
   cursor: pointer;
@@ -32,7 +45,7 @@ ul {
   right: 0.9em;
   display: none;
 }
-/******* Screenshot styling *********/
+/******* Screenshot target styling *********/
 #canvas {
   max-width:100%;
   height:auto;
