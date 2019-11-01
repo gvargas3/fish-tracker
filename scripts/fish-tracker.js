@@ -75,6 +75,12 @@ $('#content-holder').on('home-load', function(){
   });
   
   formula.trigger('input');
+
+  $('#test-btn').on('click', function(){
+    $('#content-holder').load('html/run-test.html', function(){
+      $('#content-holder').trigger('test-page-load');
+    });
+  })
 });
 
 /******************************* Connections Page functionality **************************************************************/
@@ -127,6 +133,22 @@ $('#content-holder').on('connections-load', function(){
   });
 });
 
+/******************************* Run test functionality **************************************************************/
+$('#content-holder').on('test-page-load', function(){
+  client.invoke("getScreenshot", (error, filepath) => {
+    if(error) 
+    {
+      console.error(error)
+    } 
+    else 
+    {
+      console.log('filepath:',filepath)
+      $('#screenshot').attr('src', filepath);
+      initDraw($('#canvas'));
+    }
+  });
+});
+
 /******************************* Completed Tests functionality **************************************************************/
 $('#content-holder').on('completed-tests-load', function(){
   saveCompletedTest();
@@ -141,6 +163,57 @@ $('#content-holder').on('completed-tests-load', function(){
   //   }
   // });
 });
+
+/******************************* Drawing a box on image for ML algorithm **************************************************************/
+var initDraw = function(canvas) {
+  function setMousePosition(e) {
+      var ev = e || window.event; 
+      if (ev.pageX) 
+      { 
+        mouse.x = ev.pageX + window.pageXOffset;
+        mouse.y = ev.pageY + window.pageYOffset;
+      } 
+  };
+
+  var mouse = {
+      x: 0,
+      y: 0,
+      startX: 0,
+      startY: 0
+  };
+  var element = null;
+
+  canvas.on('mousemove', function (e) {
+      setMousePosition(e);
+      if (element !== null) 
+      {
+        element.css('width',Math.abs(mouse.x - mouse.startX) + 'px');
+        element.css('height',Math.abs(mouse.y - mouse.startY) + 'px');
+        element.css('left',(mouse.x - mouse.startX < 0) ? mouse.x + 'px' : mouse.startX + 'px');
+        element.css('top',(mouse.y - mouse.startY < 0) ? mouse.y + 'px' : mouse.startY + 'px');
+      }
+  });
+
+  canvas.on('click', function (e) {
+    if (element !== null) 
+    {
+      element = null;
+      canvas.css('cursor','default');
+    } 
+    else 
+    {
+      mouse.startX = mouse.x;
+      mouse.startY = mouse.y;
+      $('.rectangle').remove();
+      element = $('<div></div>');
+      element.addClass('rectangle');
+      element.css('left',mouse.x + 'px');
+      element.css('top',mouse.y + 'px');
+      canvas.append(element);
+      canvas.css('cursor','crosshair');
+    }
+  });
+}
 
 /******************************* Saving completed tests **************************************************************/
 var saveCompletedTest = function()

@@ -27,6 +27,11 @@ class CalcApi(object):
             connection.saveCompletedTest(self)
         except Exception as e:
             return e
+    def getScreenshot(self):
+        try:
+            return connection.getScreenshot(self)
+        except Exception as e:
+            return e
     def echo(self, text):
         print('called Echo method')
         """echo any text"""

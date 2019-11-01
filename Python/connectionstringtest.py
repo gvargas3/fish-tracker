@@ -21,3 +21,9 @@ def saveCompletedTest(self):
 
     with open('temp\\completed-tests.txt', 'w') as outfile:
         json.dump(data, outfile)
+def getScreenshot(self):
+    #Need code for getting a screenshot from the board
+    #Need code for saving that screenshot in the images folder
+
+    filepath = 'images/test.jpg'
+    return filepath
