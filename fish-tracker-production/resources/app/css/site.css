@@ -1,0 +1,62 @@
+ul {
+  list-style-type: none;
+}
+#content-holder{
+  margin-bottom: 2em;
+  margin-top: 2em;
+}
+.error-message{
+  color: red;
+  display: none;
+}
+.button-container{
+  padding-top: 1em;
+}
+.submit{
+  float: right;
+}
+/******* Nav Bar styling *********/
+.nav-item {
+  cursor: pointer;
+}
+.nav-item.disabled {
+  cursor: default;
+}
+#alert-div {
+  width: 8.3em;
+  cursor: pointer;
+}
+#alert-div:hover{
+  color: rgba(255,255,255,.75);
+}
+#alert-div.active{
+  color: #fff;
+}
+#alert-num {
+  background-color: white;
+  color: #007bff;
+  text-align: center;
+  line-height: 1em;
+  border-radius: 50%;
+  width: 1em;
+  height: 1em;
+  position: absolute;
+  top: 0.7em;
+  right: 0.9em;
+  display: none;
+}
+/******* Screenshot target styling *********/
+#canvas {
+  max-width:100%;
+  height:auto;
+  border: 5px solid black;
+  cursor: crosshair;
+}
+#screenshot{
+  max-width: 100%;
+  max-height: 100%;
+}
+.rectangle {
+  border: 1px solid #FF0000;
+  position: absolute;
+}
