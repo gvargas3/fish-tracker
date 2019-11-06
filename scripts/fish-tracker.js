@@ -164,7 +164,7 @@ $('#content-holder').on('test-page-load', function(){
             {
               console.log('coordinates set:', isGood);
             }
-          }
+          })
         }
         else
         {
