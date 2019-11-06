@@ -1,6 +1,7 @@
 from __future__ import print_function
 from calc import calc as real_calc
 import connectionstringtest as connection
+import pythonMethods as pm
 import giveCoords as coords
 import sys
 import zerorpc
@@ -38,6 +39,12 @@ class CalcApi(object):
             return coords.giveCoords(array)
         except Exception as e:
             return e
+    def getCurrentNetwork(self):
+        try:
+            return pm.getCurrentNetwork()
+        except Exception as e:
+            return e
+        
     def echo(self, text):
         print('called Echo method')
         """echo any text"""
