@@ -150,6 +150,21 @@ $('#content-holder').on('test-page-load', function(){
         if($('.rectangle').length > 0)
         {
           console.log('submit called')
+          var coords = [[]];
+          coords[0][0] = '10';
+          coords[0][1] = '20';
+          coords[1][0] = '40';
+          coords[1][0] = '60';
+          client.invoke("giveCoords", coords, (error, isGood) => {
+            if(error) 
+            {
+              console.error(error)
+            }
+            else
+            {
+              console.log('coordinates set:', isGood);
+            }
+          }
         }
         else
         {
