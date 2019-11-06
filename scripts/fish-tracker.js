@@ -92,7 +92,6 @@ $('#content-holder').on('connections-load', function(){
   getConBtn.on('click', function() {
     $('#calculator').hide();
     connectBtn.show();
-    console.log(connectBtn);
     client.invoke("getConnections", (error, connectionString) => {
       if(error) 
       {
@@ -104,7 +103,7 @@ $('#content-holder').on('connections-load', function(){
         {
           $('#connection-holder').append('<li><input type="radio" name="connection-radio-button" string="' + connection + '">' + connection + '</li>')
         });
-        console.log(connectionString)
+        console.log('connection got back:',connectionString)
       }
     });
   });
