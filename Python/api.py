@@ -3,6 +3,7 @@ from calc import calc as real_calc
 import connectionstringtest as connection
 import pythonMethods as pm
 import giveCoords as coords
+import newestClient as nc
 import sys
 import zerorpc
 
@@ -49,7 +50,11 @@ class CalcApi(object):
             return pm.connectNetwork(ssid)
         except Exception as e:
             return e
-        
+    def startVideo(self,t,name):
+        try: 
+            return nc.startVideo(t,name)
+        except Exception as e:
+            return e
     def echo(self, text):
         print('called Echo method')
         """echo any text"""

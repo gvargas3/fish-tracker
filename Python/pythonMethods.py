@@ -30,4 +30,3 @@ def connectToBoard(ssid):
         return nc.areYouBoard()
     except:
         return False
-    

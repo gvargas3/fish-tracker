@@ -89,9 +89,9 @@ def startVideo(t, name):
                     try:      
                         confirmation = Tcp_ReadNew()
                         if(confirmation == "Recording"):
-                            if(not os.path.exists(".\\Tests\\" + name)):
-                                os.makedirs(".\\Tests\\" + name + "\\")
-                            return "Sent"
+                            if(not os.path.exists(".\\tests\\" + name)):
+                                os.makedirs(".\\tests\\" + name + "\\")
+                            return True
                         else:
                             return "Error in giving the name"
                     except socket.timeout:
