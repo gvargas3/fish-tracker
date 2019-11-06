@@ -91,9 +91,25 @@ $('#content-holder').on('home-load', function(){
   
   formula.trigger('input');
 
+  //Test button functionality
   $('#test-btn').on('click', function(){
     $('#content-holder').load('html/run-test.html', function(){
       $('#content-holder').trigger('test-page-load');
+    });
+  })
+
+  $('#video-test-btn').on('click', function(){
+    var duration = 10;
+    var name = 'video-test';
+    client.invoke("startVideo", duration, name, (error, res) => {
+      if(error) 
+      {
+        console.error(error);
+      } 
+      else 
+      {
+        console.log('Video test called');
+      }
     });
   })
 });
@@ -290,6 +306,7 @@ var connectToPrevWifi = function(){
   });
 }
 var connectToBoard = function(callBack){
+  console.log('Called connect to board');
   client.invoke("connectNetwork", currentBoard, (error, isConnected) => {
     if(error) 
     {
