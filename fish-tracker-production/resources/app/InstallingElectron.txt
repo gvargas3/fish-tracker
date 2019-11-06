@@ -1,2 +1,0 @@
-npm install --runtime=electron --target=1.7.6
-.\node_modules\.bin\electron-rebuild.cmd
