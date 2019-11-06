@@ -10,15 +10,21 @@ def getConnections(c):
     netList = x.scan()
     connectionArray=['test']
     for p in netList:
-        connectionArray.append(p._ssid)
+        if p._ssid!='':
+            connectionArray.append(p._ssid)
     
     #['Connection 1', 'Connection 2', 'Connection 3']
     print(connectionArray)
     return  connectionArray
 
-def connect(self,c):
+def connect(self,ssid):
+    x = winwifi.WinWiFi()
+    try:
+        x.connect(ssid)
+        return True
+    except:
+        return False
     #Need code to connect to the PI, c is the name of the wiFi connection the user chose
-    return c
 def saveCompletedTest(self):
     data = {}
     data['tests'] = []
