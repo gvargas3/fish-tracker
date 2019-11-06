@@ -13,3 +13,11 @@ def getCurrentNetwork():
     if(text != []):
         text = text[0]._ssid
     return text
+
+def connectNetwork(ssid):
+    x = ww.WinWiFi
+    try:
+        x.connect(ssid)
+        return True
+    except:
+        return False
