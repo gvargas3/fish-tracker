@@ -71,6 +71,7 @@ def getPicture():
         return ""
     
 def startVideo(t, name):
+    print("trying video")
     Tcp_connect( '169.254.0.1', 5005)
     Tcp_Write('Start video'+'~')
     s.settimeout(2)
