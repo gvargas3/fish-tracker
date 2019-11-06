@@ -1,6 +1,19 @@
 $(document).ready(function () 
 {
 console.log('Called fish-tracker');
+//Get network currently connected to
+var currentNetwork;
+client.invoke("getCurrentNetwork", (error, network) => {
+  if(error) 
+  {
+    console.error(error);
+  } 
+  else 
+  {
+    currentNetwork = network;
+    console.log('Current network:', currentNetwork);
+  }
+});
 /******************************* Nav Bar functionality **************************************************************/
 $('#home-nav').click(function()
 {
