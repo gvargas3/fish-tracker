@@ -3,6 +3,7 @@ $(document).ready(function ()
 console.log('Called fish-tracker');
 //Get network currently connected to
 var currentNetwork;
+var currentBoard;
 client.invoke("getCurrentNetwork", (error, network) => {
   if(error) 
   {
@@ -11,6 +12,7 @@ client.invoke("getCurrentNetwork", (error, network) => {
   else 
   {
     currentNetwork = network;
+    currentBoard = network;
     console.log('Current network:', currentNetwork);
   }
 });
@@ -128,14 +130,21 @@ $('#content-holder').on('connections-load', function(){
     
     if(selection.length > 0)
     {
-      client.invoke("connectToBoard", selection.attr('string'), (error, message) => {
+      client.invoke("connectToBoard", selection.attr('string'), (error, isGood) => {
         if(error) 
         {
           console.error(error)
         } 
         else 
         {
-          console.log(message)
+          if(isGood)
+          {
+            currentBoard = selection.attr('string');
+          }
+          else
+          {
+            console.log('There was an error connecting to the board.');
+          }
         }
       });
     }
@@ -148,40 +157,42 @@ $('#content-holder').on('connections-load', function(){
 
 /******************************* Run test functionality **************************************************************/
 $('#content-holder').on('test-page-load', function(){
-  client.invoke("getScreenshot", (error, filepath) => {
-    if(error) 
-    {
-      console.error(error)
-    } 
-    else 
-    {
-      console.log('filepath:',filepath)
-      $('#screenshot').attr('src', filepath);
-      initDraw($('#canvas'));
-
-      $('#submit-btn').on('click', function(){
-        if($('.rectangle').length > 0)
-        {
-          console.log('submit called')
-          var coords = [['10', '20'],['40','60']];
-          client.invoke("giveCoords", coords, (error, isGood) => {
-            if(error) 
-            {
-              console.error(error)
-            }
-            else
-            {
-              console.log('coordinates set:', isGood);
-            }
-          })
-        }
-        else
-        {
-          $('#error').show();
-          $('#info').hide();
-        }
-      });
-    }
+  connectToBoard(function(){
+    client.invoke("getScreenshot", (error, filepath) => {
+      if(error) 
+      {
+        console.error(error)
+      } 
+      else 
+      {
+        console.log('filepath:',filepath)
+        $('#screenshot').attr('src', filepath);
+        initDraw($('#canvas'));
+  
+        $('#submit-btn').on('click', function(){
+          if($('.rectangle').length > 0)
+          {
+            console.log('submit called')
+            var coords = [['10', '20'],['40','60']];
+            client.invoke("giveCoords", coords, (error, isGood) => {
+              if(error) 
+              {
+                console.error(error)
+              }
+              else
+              {
+                console.log('coordinates set:', isGood);
+              }
+            })
+          }
+          else
+          {
+            $('#error').show();
+            $('#info').hide();
+          }
+        });
+      }
+    });
   });
 });
 
@@ -262,6 +273,39 @@ var saveCompletedTest = function()
     else 
     {
       console.log(message)
+    }
+  });
+}
+/******************************* Connection functions **************************************************************/
+var connectToPrevWifi = function(){
+  client.invoke("connectNetwork", currentNetwork, (error, isConnected) => {
+    if(error) 
+    {
+      console.error(error);
+    } 
+    else 
+    {
+      console.log('Connected to network:', isConnected);
+    }
+  });
+}
+var connectToBoard = function(callBack){
+  client.invoke("connectNetwork", currentBoard, (error, isConnected) => {
+    if(error) 
+    {
+      console.error(error);
+    } 
+    else 
+    {
+      console.log('Connected to board:', isConnected);
+      if(isConnected)
+      {
+        callBack();
+      }
+      else
+      {
+        console.log('There was an error connecting to the board')
+      }
     }
   });
 }
