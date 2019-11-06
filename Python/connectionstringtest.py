@@ -3,6 +3,7 @@ import os
 import json
 import winwifi
 
+
 def getConnections(c):
     #Some code to query what PI boards are available and gets their names
     x = winwifi.WinWiFi()
