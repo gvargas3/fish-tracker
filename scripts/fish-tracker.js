@@ -101,6 +101,7 @@ $('#content-holder').on('connections-load', function(){
       {
         $.each(connectionString, function(i, connection)
         {
+          console.log('connection ' + i + ':', connection);
           $('#connection-holder').append('<li><input type="radio" name="connection-radio-button" string="' + connection + '">' + connection + '</li>')
         });
         console.log('connection got back:',connectionString)
