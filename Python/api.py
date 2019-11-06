@@ -44,6 +44,11 @@ class CalcApi(object):
             return pm.getCurrentNetwork()
         except Exception as e:
             return e
+    def connectNetwork(self, ssid):
+        try:
+            return pm.connectNetwork(ssid)
+        except Exception as e:
+            return e
         
     def echo(self, text):
         print('called Echo method')
