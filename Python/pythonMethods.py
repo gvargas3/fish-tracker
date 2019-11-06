@@ -6,6 +6,7 @@ Created on Wed Nov  6 13:11:47 2019
 """
 
 import winwifi as ww
+import newestClient as nc
 
 def getCurrentNetwork():
     x = ww.WinWiFi
@@ -21,3 +22,12 @@ def connectNetwork(ssid):
         return True
     except:
         return False
+    
+def connectToBoard(ssid):
+    x = ww.WinWiFi
+    try:
+        x.connect(ssid)
+        return nc.areYouBoard()
+    except:
+        return False
+    
