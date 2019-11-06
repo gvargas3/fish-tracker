@@ -1,6 +1,7 @@
 from __future__ import print_function
 from calc import calc as real_calc
 import connectionstringtest as connection
+import giveCoords as coords
 import sys
 import zerorpc
 
@@ -30,6 +31,11 @@ class CalcApi(object):
     def getScreenshot(self):
         try:
             return connection.getScreenshot(self)
+        except Exception as e:
+            return e
+    def giveCoords(self, array):
+        try:
+            return coords.giveCoords(array)
         except Exception as e:
             return e
     def echo(self, text):
