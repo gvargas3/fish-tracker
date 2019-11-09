@@ -116,7 +116,7 @@ $('#content-holder').on('home-load', function(){
 
 /******************************* Connections Page functionality **************************************************************/
 $('#content-holder').on('connections-load', function(){
-  var getConBtn = $('#getConnectionsTest-btn');
+  var getConBtn = $('#refresh-btn');
   var connectBtn = $('#connectTest-btn');
   var connectionArray;
 
@@ -137,22 +137,44 @@ $('#content-holder').on('connections-load', function(){
     }
   });
 
+  getConBtn.on('click', function(){
+    client.invoke("getConnections", (error, connectionString) => {
+      if(error) 
+      {
+        console.error(error)
+      } 
+      else 
+      {
+        $('#connections option').remove();
+        $.each(connectionString, function(i, connection)
+        {
+          console.log('connection ' + i + ':', connection);
+          $('#connections').append('<option>' + connection + '</option>')
+        });
+        connectBtn.show();
+        console.log('connection got back:',connectionString)
+      }
+    });
+  });
+
   connectBtn.on('click', function()
   {
-    var selection = $("input[name='connection-radio-button']:checked");
+    var selection = $('#connections').val()[0];
+    console.log('selection:', selection);
     
     if(selection.length > 0)
     {
-      client.invoke("connectToBoard", selection.attr('string'), (error, isGood) => {
+      client.invoke("connectToBoard", selection, (error, message) => {
         if(error) 
         {
           console.error(error)
         } 
         else 
         {
-          if(isGood)
+          console.log('message:',message);
+          if(message)
           {
-            currentBoard = selection.attr('string');
+            currentBoard = selection;
           }
           else
           {
