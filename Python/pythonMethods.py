@@ -32,7 +32,16 @@ def connectToBoard(ssid):
     x = ww.WinWiFi
     try:
         x.connect(ssid)
-        return areYouBoard(ssid)
+        Tcp_connect( '169.254.0.1', 5005)
+        Tcp_Write('Are You Bored?'+'~')
+    
+        response = Tcp_ReadNew()
+        if response == "Yes I am":
+            disconnect()
+            return "connected"
+        else:
+            disconnect()
+            return "not a board"
     except:
         disconnect()
         return "could not connect"
@@ -230,7 +239,7 @@ def Tcp_Close( ):
    return 
    
 def areYouBoard(boardName):
-    connectForAction(boardName)
+    #connectForAction(boardName)
     Tcp_connect( '169.254.0.1', 5005)
     Tcp_Write('Are You Bored?'+'~')
     
