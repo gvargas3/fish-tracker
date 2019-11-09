@@ -8,7 +8,7 @@ def getConnections(c):
     #Some code to query what PI boards are available and gets their names
     x = winwifi.WinWiFi()
     netList = x.scan()
-    connectionArray=['test']
+    connectionArray=[]
     for p in netList:
         if p._ssid!='':
             connectionArray.append(p._ssid)
