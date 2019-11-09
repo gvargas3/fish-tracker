@@ -172,9 +172,10 @@ $('#content-holder').on('connections-load', function(){
         else 
         {
           console.log('message:',message);
+          currentBoard = selection;
           if(message == 'connected')
           {
-            currentBoard = selection;
+            console.log('Connection succeeded')
           }
           else
           {
@@ -207,6 +208,9 @@ $('#content-holder').on('test-page-load', function(){
     if(valid)
     {
       var seconds = 3600*Number($('#hours').val()) + 60*$('#minutes').val();
+      console.log('currentBoard', currentBoard);
+      console.log('time', seconds);
+      console.log('name:', $('#name').val());
       client.invoke("startVideo", currentBoard, seconds, $('#name').val(), (error, res) => {
         if(error) 
         {
