@@ -46,9 +46,9 @@ def connectForAction(ssid):
         return False
     
 def disconnect():
-    x = ww.WinWifi
+    x = ww.WinWiFi
     try:
-        x.disconnect
+        x.disconnect()
         return True
     except:
         return False
@@ -241,5 +241,6 @@ def areYouBoard(boardName):
     else:
         disconnect()
         return "not a board"
+print(areYouBoard("Tank01"))
 
 #print(connectNetwork("It Hurts When IP"))
