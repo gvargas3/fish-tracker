@@ -22,7 +22,7 @@ class CalcApi(object):
             return 0.0
     def connectToBoard(self, connectionName):
         try:
-            return connection.connect(self, connectionName)
+            return pm.connectToBoard(connectionName)
         except Exception as e:
             return 0.0
     def saveCompletedTest(self):
