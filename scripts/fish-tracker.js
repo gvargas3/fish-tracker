@@ -120,24 +120,21 @@ $('#content-holder').on('connections-load', function(){
   var connectBtn = $('#connectTest-btn');
   var connectionArray;
 
-  getConBtn.on('click', function() {
-    $('#calculator').hide();
-    client.invoke("getConnections", (error, connectionString) => {
-      if(error) 
+  client.invoke("getConnections", (error, connectionString) => {
+    if(error) 
+    {
+      console.error(error)
+    } 
+    else 
+    {
+      $.each(connectionString, function(i, connection)
       {
-        console.error(error)
-      } 
-      else 
-      {
-        $.each(connectionString, function(i, connection)
-        {
-          console.log('connection ' + i + ':', connection);
-          $('#connection-holder').append('<li><input type="radio" name="connection-radio-button" string="' + connection + '">' + connection + '</li>')
-        });
-        connectBtn.show();
-        console.log('connection got back:',connectionString)
-      }
-    });
+        console.log('connection ' + i + ':', connection);
+        $('#connections').append('<option>' + connection + '</option>')
+      });
+      connectBtn.show();
+      console.log('connection got back:',connectionString)
+    }
   });
 
   connectBtn.on('click', function()
@@ -174,7 +171,8 @@ $('#content-holder').on('connections-load', function(){
 $('#content-holder').on('test-page-load', function(){
   $('#submit-btn').on('click', function(){
     var valid = true;
-    if($('#hours').val() == 0 || $('#minutes').val() == 0)
+    console.log('Submit button pressed')
+    if($('#hours').val() == 0 && $('#minutes').val() == 0)
     {
       valid = false;
     }
@@ -183,6 +181,7 @@ $('#content-holder').on('test-page-load', function(){
       console.log('Name is not valid');
       valid = false;
     }
+    console.log('valid:', valid)
     if(valid)
     {
       var seconds = 3600*Number($('#hours').val()) + 60*$('#minutes').val();
