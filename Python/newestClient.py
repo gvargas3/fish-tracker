@@ -175,7 +175,6 @@ def areYouBoard( ):
     else:
         return False
     
-#print(getVideo("video-test"))
 #print(getPicture())
 
 
