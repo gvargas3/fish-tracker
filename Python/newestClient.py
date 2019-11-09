@@ -175,8 +175,8 @@ def areYouBoard( ):
     else:
         return False
     
-print(getVideo("video-test"))
-print(getPicture())
+#print(getVideo("testRun"))
+#print(getPicture())
 
 
 #startVideo(20,"newTest")
