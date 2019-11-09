@@ -116,7 +116,7 @@ $('#content-holder').on('home-load', function(){
 
 /******************************* Connections Page functionality **************************************************************/
 $('#content-holder').on('connections-load', function(){
-  var getConBtn = $('#getConnectionsTest-btn');
+  var getConBtn = $('#refresh-btn');
   var connectBtn = $('#connectTest-btn');
   var connectionArray;
 
@@ -137,22 +137,44 @@ $('#content-holder').on('connections-load', function(){
     }
   });
 
+  getConBtn.on('click', function(){
+    client.invoke("getConnections", (error, connectionString) => {
+      if(error) 
+      {
+        console.error(error)
+      } 
+      else 
+      {
+        $('#connections option').remove();
+        $.each(connectionString, function(i, connection)
+        {
+          console.log('connection ' + i + ':', connection);
+          $('#connections').append('<option>' + connection + '</option>')
+        });
+        connectBtn.show();
+        console.log('connection got back:',connectionString)
+      }
+    });
+  });
+
   connectBtn.on('click', function()
   {
-    var selection = $("input[name='connection-radio-button']:checked");
+    var selection = $('#connections').val()[0];
+    console.log('selection:', selection);
     
     if(selection.length > 0)
     {
-      client.invoke("connectToBoard", selection.attr('string'), (error, isGood) => {
+      client.invoke("connectToBoard", selection, (error, message) => {
         if(error) 
         {
           console.error(error)
         } 
         else 
         {
-          if(isGood)
+          console.log('message:',message);
+          if(message == 'connected')
           {
-            currentBoard = selection.attr('string');
+            currentBoard = selection;
           }
           else
           {
@@ -185,7 +207,7 @@ $('#content-holder').on('test-page-load', function(){
     if(valid)
     {
       var seconds = 3600*Number($('#hours').val()) + 60*$('#minutes').val();
-      client.invoke("startVideo", seconds, $('#name').val(), (error, res) => {
+      client.invoke("startVideo", currentBoard, seconds, $('#name').val(), (error, res) => {
         if(error) 
         {
           console.error(error);
@@ -200,42 +222,40 @@ $('#content-holder').on('test-page-load', function(){
 });
 /******************************* Box draw functionality **************************************************************/
 $('#content-holder').on('box-draw-load', function(){
-  connectToBoard(function(){
-    client.invoke("getScreenshot", (error, filepath) => {
-      if(error) 
-      {
-        console.error(error)
-      } 
-      else 
-      {
-        console.log('filepath:',filepath)
-        $('#screenshot').attr('src', filepath);
-        initDraw($('#canvas'));
-  
-        $('#submit-btn').on('click', function(){
-          if($('.rectangle').length > 0)
-          {
-            console.log('submit called')
-            var coords = [['10', '20'],['40','60']];
-            client.invoke("giveCoords", coords, (error, isGood) => {
-              if(error) 
-              {
-                console.error(error)
-              }
-              else
-              {
-                console.log('coordinates set:', isGood);
-              }
-            })
-          }
-          else
-          {
-            $('#error').show();
-            $('#info').hide();
-          }
-        });
-      }
-    });
+  client.invoke("getPicture", currentBoard, (error, filepath) => {
+    if(error) 
+    {
+      console.error(error)
+    } 
+    else 
+    {
+      console.log('filepath:',filepath)
+      $('#screenshot').attr('src', filepath);
+      initDraw($('#canvas'));
+
+      $('#submit-btn').on('click', function(){
+        if($('.rectangle').length > 0)
+        {
+          console.log('submit called')
+          var coords = [['10', '20'],['40','60']];
+          client.invoke("giveCoords", coords, (error, isGood) => {
+            if(error) 
+            {
+              console.error(error)
+            }
+            else
+            {
+              console.log('coordinates set:', isGood);
+            }
+          })
+        }
+        else
+        {
+          $('#error').show();
+          $('#info').hide();
+        }
+      });
+    }
   });
 });
 
