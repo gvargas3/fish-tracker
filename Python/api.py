@@ -3,7 +3,7 @@ from calc import calc as real_calc
 import connectionstringtest as connection
 import pythonMethods as pm
 import giveCoords as coords
-import newestClient as nc
+#import newestClient as nc
 import sys
 import zerorpc
 
@@ -14,7 +14,7 @@ class CalcApi(object):
             print('In calculator')
             return real_calc(text)
         except Exception as e:
-            return 0.0    
+            return 0.0
     def getConnections(self):
         try:
             return connection.getConnections(self)
@@ -30,9 +30,9 @@ class CalcApi(object):
             connection.saveCompletedTest(self)
         except Exception as e:
             return e
-    def getScreenshot(self):
+    def getPicture(self, boardName):
         try:
-            return connection.getScreenshot(self)
+            return pm.getPicture(boardName)
         except Exception as e:
             return e
     def giveCoords(self, array):
@@ -50,9 +50,9 @@ class CalcApi(object):
             return pm.connectNetwork(ssid)
         except Exception as e:
             return e
-    def startVideo(self,t,name):
+    def startVideo(self,boardName, t,name):
         try: 
-            return nc.startVideo(t,name)
+            return pm.startVideo(boardName, t,name)
         except Exception as e:
             return e
     def echo(self, text):

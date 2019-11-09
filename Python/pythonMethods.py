@@ -32,7 +32,7 @@ def connectToBoard(ssid):
     x = ww.WinWiFi
     try:
         x.connect(ssid)
-        return nc.areYouBoard()
+        return areYouBoard()
     except:
         return "could not connect"
     
