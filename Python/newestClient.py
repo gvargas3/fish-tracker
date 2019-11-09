@@ -8,6 +8,8 @@ Created on Thu Oct 10 20:29:20 2019
 #!/usr/bin/env python
 import socket, time, os
 import winwifi as ww
+import ffmpeg
+
 
 def Tcp_connect( HostIp, Port ):
     global s
@@ -56,7 +58,7 @@ def checkConnection():
 def getPicture():
     Tcp_connect( '169.254.0.1', 5005)
     Tcp_Write('gimmePic~')
-    text='.\\' + AP_NAME + '_frame.jpg'
+    text='.\\tests\\frame.jpg'
     f = open(text, 'wb')
     s.settimeout(10)
     try:       
@@ -75,6 +77,7 @@ def startVideo(t, name):
     Tcp_connect( '169.254.0.1', 5005)
     Tcp_Write('Start video'+'~')
     s.settimeout(2)
+    print("sent command")
     try:      
         confirmation = Tcp_ReadNew()
         if(confirmation == "Time?"):
@@ -106,6 +109,45 @@ def startVideo(t, name):
     except socket.timeout:
         return "Couldn't send command"
     
+def getCsv(name):
+    Tcp_connect( '169.254.0.1', 5005)
+    Tcp_Write(name + "/" + name + ".csv" + "~")
+    text = '.\\tests\\' + name
+    if(not os.path.exists(text)):
+        os.makedirs(".\\tests\\" + name + "\\")
+    f = open(text + "\\" + name + ".csv", 'wb')
+    s.settimeout(10)
+    try:       
+        l = s.recv(1024)
+        while (l):
+            f.write(l)
+            l = s.recv(1024)
+        f.close()
+        return True
+    except socket.timeout:
+        f.close()
+        return False
+
+def getVideo(name):
+    Tcp_connect( '169.254.0.1', 5005)
+    Tcp_Write(name + "/" + name + ".mp4" + "~")
+    text = '.\\tests\\' + name
+    if(not os.path.exists(text)):
+        os.makedirs(".\\tests\\" + name + "\\")
+    f = open(text + "\\" + name + ".mp4", 'wb')
+    s.settimeout(10)
+    try:       
+        l = s.recv(1024)
+        while (l):
+            f.write(l)
+            l = s.recv(1024)
+        f.close()
+        return True
+    except socket.timeout:
+        f.close()
+        return False
+    
+    
 def getDone():
     Tcp_connect( '169.254.0.1', 5005)
     Tcp_Write('Get Completed'+'~')
@@ -132,6 +174,12 @@ def areYouBoard( ):
         return True
     else:
         return False
+    
+print(getVideo("video-test"))
+print(getPicture())
+
+
+#startVideo(20,"newTest")
 # =============================================================================
 # x = ww.WinWiFi()
 # AP_NAME = x.get_connected_interfaces()[0]._ssid
