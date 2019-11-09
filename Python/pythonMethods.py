@@ -32,7 +32,7 @@ def connectToBoard(ssid):
     x = ww.WinWiFi
     try:
         x.connect(ssid)
-        return areYouBoard()
+        return areYouBoard(ssid)
     except:
         disconnect()
         return "could not connect"
@@ -241,6 +241,6 @@ def areYouBoard(boardName):
     else:
         disconnect()
         return "not a board"
-#print(areYouBoard("Tank01"))
+#print(connectToBoard("Tank01"))
 
 #print(connectNetwork("It Hurts When IP"))
