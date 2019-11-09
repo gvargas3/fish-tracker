@@ -34,6 +34,7 @@ def connectToBoard(ssid):
         x.connect(ssid)
         return areYouBoard()
     except:
+        disconnect()
         return "could not connect"
     
 def connectForAction(ssid):
@@ -45,7 +46,7 @@ def connectForAction(ssid):
         return False
     
 def disconnect():
-    x = WinWifi
+    x = ww.WinWifi
     try:
         x.disconnect
         return True
