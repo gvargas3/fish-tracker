@@ -93,7 +93,7 @@ $('#content-holder').on('home-load', function(){
 
   //Test button functionality
   $('#test-btn').on('click', function(){
-    $('#content-holder').load('html/run-test.html', function(){
+    $('#content-holder').load('html/test-inputs.html', function(){
       $('#content-holder').trigger('test-page-load');
     });
   })
@@ -170,9 +170,37 @@ $('#content-holder').on('connections-load', function(){
     }
   });
 });
-
-/******************************* Run test functionality **************************************************************/
+/******************************* Test inputs functionality **************************************************************/
 $('#content-holder').on('test-page-load', function(){
+  $('#submit-btn').on('click', function(){
+    var valid = true;
+    if($('#hours').val() == 0 || $('#minutes').val() == 0)
+    {
+      valid = false;
+    }
+    if(/[\[\]:";*|\\<>?.\/]/.test($('#name').val()))
+    {
+      console.log('Name is not valid');
+      valid = false;
+    }
+    if(valid)
+    {
+      var seconds = 3600*Number($('#hours').val()) + 60*$('#minutes').val();
+      client.invoke("startVideo", seconds, $('#name').val(), (error, res) => {
+        if(error) 
+        {
+          console.error(error);
+        } 
+        else 
+        {
+          console.log('Video test called');
+        }
+      });
+    }
+  });
+});
+/******************************* Box draw functionality **************************************************************/
+$('#content-holder').on('box-draw-load', function(){
   connectToBoard(function(){
     client.invoke("getScreenshot", (error, filepath) => {
       if(error) 
