@@ -172,7 +172,7 @@ $('#content-holder').on('connections-load', function(){
         else 
         {
           console.log('message:',message);
-          if(message)
+          if(message == 'connected')
           {
             currentBoard = selection;
           }
