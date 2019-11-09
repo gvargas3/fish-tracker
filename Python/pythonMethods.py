@@ -241,6 +241,6 @@ def areYouBoard(boardName):
     else:
         disconnect()
         return "not a board"
-print(areYouBoard("Tank01"))
+#print(areYouBoard("Tank01"))
 
 #print(connectNetwork("It Hurts When IP"))
