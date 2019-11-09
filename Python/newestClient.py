@@ -8,7 +8,7 @@ Created on Thu Oct 10 20:29:20 2019
 #!/usr/bin/env python
 import socket, time, os
 import winwifi as ww
-import ffmpeg
+#import ffmpeg
 
 
 def Tcp_connect( HostIp, Port ):
@@ -175,8 +175,8 @@ def areYouBoard( ):
     else:
         return False
     
-print(getVideo("video-test"))
-print(getPicture())
+#print(getVideo("video-test"))
+#print(getPicture())
 
 
 #startVideo(20,"newTest")
