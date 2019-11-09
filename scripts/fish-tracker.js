@@ -207,7 +207,7 @@ $('#content-holder').on('test-page-load', function(){
     if(valid)
     {
       var seconds = 3600*Number($('#hours').val()) + 60*$('#minutes').val();
-      client.invoke("startVideo", seconds, $('#name').val(), (error, res) => {
+      client.invoke("startVideo", currentBoard, seconds, $('#name').val(), (error, res) => {
         if(error) 
         {
           console.error(error);
@@ -222,42 +222,40 @@ $('#content-holder').on('test-page-load', function(){
 });
 /******************************* Box draw functionality **************************************************************/
 $('#content-holder').on('box-draw-load', function(){
-  connectToBoard(function(){
-    client.invoke("getScreenshot", (error, filepath) => {
-      if(error) 
-      {
-        console.error(error)
-      } 
-      else 
-      {
-        console.log('filepath:',filepath)
-        $('#screenshot').attr('src', filepath);
-        initDraw($('#canvas'));
-  
-        $('#submit-btn').on('click', function(){
-          if($('.rectangle').length > 0)
-          {
-            console.log('submit called')
-            var coords = [['10', '20'],['40','60']];
-            client.invoke("giveCoords", coords, (error, isGood) => {
-              if(error) 
-              {
-                console.error(error)
-              }
-              else
-              {
-                console.log('coordinates set:', isGood);
-              }
-            })
-          }
-          else
-          {
-            $('#error').show();
-            $('#info').hide();
-          }
-        });
-      }
-    });
+  client.invoke("getPicture", currentBoard, (error, filepath) => {
+    if(error) 
+    {
+      console.error(error)
+    } 
+    else 
+    {
+      console.log('filepath:',filepath)
+      $('#screenshot').attr('src', filepath);
+      initDraw($('#canvas'));
+
+      $('#submit-btn').on('click', function(){
+        if($('.rectangle').length > 0)
+        {
+          console.log('submit called')
+          var coords = [['10', '20'],['40','60']];
+          client.invoke("giveCoords", coords, (error, isGood) => {
+            if(error) 
+            {
+              console.error(error)
+            }
+            else
+            {
+              console.log('coordinates set:', isGood);
+            }
+          })
+        }
+        else
+        {
+          $('#error').show();
+          $('#info').hide();
+        }
+      });
+    }
   });
 });
 
