@@ -3,6 +3,8 @@ from calc import calc as real_calc
 import connectionstringtest as connection
 import pythonMethods as pm
 import giveCoords as coords
+import fileManipulation as fileManip
+import "trackingTest" as tt
 #import newestClient as nc
 import sys
 import zerorpc
@@ -53,6 +55,11 @@ class CalcApi(object):
     def startVideo(self,boardName, t,name):
         try: 
             return pm.startVideo(boardName, t,name)
+        except Exception as e:
+            return e
+    def getDataFromFile(self,path,fileType="csv"):
+        try:
+            return fileManip.getDataFromFile(path,fileType)
         except Exception as e:
             return e
     def echo(self, text):

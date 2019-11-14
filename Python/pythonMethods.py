@@ -6,10 +6,13 @@ Created on Wed Nov  6 13:11:47 2019
 """
 
 import winwifi as ww
-import newestClient as nc
+#import newestClient as nc
 import time
 import socket
 import os
+
+HOST_IP_ADDRESS = '169.254.0.1'
+PORT_NUM = 5005
 
 def getCurrentNetwork():
     x = ww.WinWiFi
@@ -31,20 +34,27 @@ def connectNetwork(ssid):
 def connectToBoard(ssid):
     x = ww.WinWiFi
     try:
+        last = x.get_connected_interfaces()[0]._ssid
         x.connect(ssid)
-        Tcp_connect( '169.254.0.1', 5005)
-        Tcp_Write('Are You Bored?'+'~')
+        try:
+            
+            Tcp_connect( HOST_IP_ADDRESS, PORT_NUM)
+            Tcp_Write('Are You Bored?'+'~')
     
-        response = Tcp_ReadNew()
-        if response == "Yes I am":
+            response = Tcp_ReadNew()
+            if response == "Yes I am":
+                disconnect()
+                return "connected"
+            else:
+                disconnect()
+                return "not a board"
+        except:
+            time.sleep(1)
             disconnect()
-            return "connected"
-        else:
-            disconnect()
-            return "not a board"
+            return "could not connect socket"
     except:
-        disconnect()
-        return "could not connect"
+        x.connect(last)
+        return "could not connect to access point"
     
 def connectForAction(ssid):
     x = ww.WinWiFi
@@ -52,6 +62,8 @@ def connectForAction(ssid):
         x.connect(ssid)
         return True
     except:
+        time.sleep(1)
+        disconnect()
         return False
     
 def disconnect():
@@ -95,7 +107,7 @@ def Tcp_ReadNew( ):
 
 def checkConnection(boardName):
     connectForAction(boardName)
-    Tcp_connect( '169.254.0.1', 5005)
+    Tcp_connect( HOST_IP_ADDRESS, PORT_NUM)
     Tcp_Write("Are you there?~")
     s.settimeout(2)
     try:      
@@ -112,7 +124,7 @@ def checkConnection(boardName):
 
 def getPicture(boardName):
     connectForAction(boardName)
-    Tcp_connect( '169.254.0.1', 5005)
+    Tcp_connect( HOST_IP_ADDRESS, PORT_NUM)
     Tcp_Write('gimmePic~')
     text='.\\tests\\frame.jpg'
     f = open(text, 'wb')
@@ -133,20 +145,20 @@ def getPicture(boardName):
 def startVideo(boardName, t, name):
     connectForAction(boardName)
     print("trying video")
-    Tcp_connect( '169.254.0.1', 5005)
+    Tcp_connect( HOST_IP_ADDRESS, PORT_NUM)
     Tcp_Write('Start video'+'~')
     s.settimeout(2)
     print("sent command")
     try:      
         confirmation = Tcp_ReadNew()
         if(confirmation == "Time?"):
-            Tcp_connect( '169.254.0.1', 5005)
+            Tcp_connect( HOST_IP_ADDRESS, PORT_NUM)
             Tcp_Write(str(t)+'~')
             s.settimeout(2)
             try:      
                 confirmation = Tcp_ReadNew()
                 if(confirmation == "Name?"):
-                    Tcp_connect( '169.254.0.1', 5005)
+                    Tcp_connect( HOST_IP_ADDRESS, PORT_NUM)
                     Tcp_Write(name+'~')
                     s.settimeout(2)
                     try:      
@@ -177,7 +189,7 @@ def startVideo(boardName, t, name):
     
 def getCsv(boardName, name):
     connectForAction(boardName)
-    Tcp_connect( '169.254.0.1', 5005)
+    Tcp_connect( HOST_IP_ADDRESS, PORT_NUM)
     Tcp_Write(name + "/" + name + ".csv" + "~")
     text = '.\\tests\\' + name
     if(not os.path.exists(text)):
@@ -199,7 +211,7 @@ def getCsv(boardName, name):
 
 def getVideo(boardName, name):
     connectForAction(boardName)
-    Tcp_connect( '169.254.0.1', 5005)
+    Tcp_connect( HOST_IP_ADDRESS, PORT_NUM)
     Tcp_Write(name + "/" + name + ".mp4" + "~")
     text = '.\\tests\\' + name
     if(not os.path.exists(text)):
@@ -222,7 +234,7 @@ def getVideo(boardName, name):
     
 def getDone(boardName):
     connectForAction(boardName)
-    Tcp_connect( '169.254.0.1', 5005)
+    Tcp_connect( HOST_IP_ADDRESS, PORT_NUM)
     Tcp_Write('Get Completed'+'~')
     numDone = int(Tcp_ReadNew())
     
@@ -240,7 +252,7 @@ def Tcp_Close( ):
    
 def areYouBoard(boardName):
     #connectForAction(boardName)
-    Tcp_connect( '169.254.0.1', 5005)
+    Tcp_connect( HOST_IP_ADDRESS, PORT_NUM)
     Tcp_Write('Are You Bored?'+'~')
     
     response = Tcp_ReadNew()
@@ -251,5 +263,7 @@ def areYouBoard(boardName):
         disconnect()
         return "not a board"
 #print(connectToBoard("Tank01"))
+print(connectToBoard("Tank01"))
+print(getPicture("Tank01"))
 
 #print(connectNetwork("It Hurts When IP"))
