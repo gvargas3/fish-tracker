@@ -22,9 +22,10 @@ def getDataFromFile(filePath, fileType="csv"):
             x = np.array(x)
             x = x.flatten()
             array = np.delete(array,x,0)
+            yMax = np.max(array[:,2])
+            array[:,2] = yMax - array[:,2]
             return array
         except:
             return "couldn't load file"
     else:
         return "Invalid Data Type"
-    

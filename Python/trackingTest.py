@@ -25,7 +25,9 @@ def trackVideo(filePath, imagePath, testName):
     xMax = np.shape(startFrame)[1]
     
     roi1 = image
-    #cv2.waitKey(0)
+# =============================================================================
+#     cv2.waitKey(0)
+# =============================================================================
     hsv_roi = cv2.cvtColor(roi1,cv2.COLOR_BGR2HSV)
     roi_hist = cv2.calcHist([hsv_roi],[0], None, [180], [0,180])
     roi_hist = cv2.normalize(roi_hist, roi_hist, 0, 255, cv2.NORM_MINMAX)
@@ -41,6 +43,7 @@ def trackVideo(filePath, imagePath, testName):
         if ret == True:
             hsv = cv2.cvtColor(frame,cv2.COLOR_BGR2HSV)
             mask = cv2.calcBackProject([hsv], [0], roi_hist, [0,180],1)
+            
             if (start):
                 try:
                     _, track_window = cv2.meanShift(mask, (int(np.floor(np.mean(np.where(mask == 1)[1]))) - 60, int(np.floor(np.mean(np.where(mask == 1)[0]))) - 40,120,80), term_criteria)
@@ -67,14 +70,14 @@ def trackVideo(filePath, imagePath, testName):
     ### above where it says: cv2.waitKey(0)#######################################
     ##############################################################################
                 
-    # =============================================================================
-    #         cv2.imshow("mask", mask)
-    #         cv2.imshow("frame",frame)
-    #         
-    #         key = cv2.waitKey(60)
-    #         if key == 27:
-    #             break          
-    # =============================================================================
+# =============================================================================
+#             cv2.imshow("mask", mask)
+#             cv2.imshow("frame",frame)
+#             key = cv2.waitKey(60)
+#             if key == 27:
+#                 break          
+# =============================================================================
+
         else:
             break
     
@@ -92,20 +95,11 @@ def trackVideo(filePath, imagePath, testName):
         out = csv.writer(f, delimiter=',',quoting=csv.QUOTE_MINIMAL)
         #output = csv.DictWriter(f,delimiter=',', fieldnames=allPoints)
         for rows in allPoints:
-            out.writerow(rows) 
-            
+            out.writerow(rows)    
     video.release()
     cv2.destroyAllWindows()
+
     
-    #Plots and saves image of path traveled
-    pl.figure()
-    pl.rcParams.update({'font.size': 20})
-    pl.plot(allPoints[:,1],allPoints[:,2])
-    pl.axis([0, xMax, 0, yMax])
-    pl.xlabel("x")
-    pl.ylabel("y")
-    pl.title("Path of Fish")
-    pl.savefig(testName + "Path.jpg")
     return
 
-trackVideo("testVid.mp4", "brown.jpg", "newTest")
+trackVideo("testVid2.mp4", "brown.jpg", "newTest")

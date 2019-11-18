@@ -43,14 +43,14 @@ def connectToBoard(ssid):
     
             response = Tcp_ReadNew()
             if response == "Yes I am":
-                disconnect()
+                disconnect(ssid)
                 return "connected"
             else:
-                disconnect()
+                disconnect(ssid)
                 return "not a board"
         except:
             time.sleep(1)
-            disconnect()
+            disconnect(ssid)
             return "could not connect socket"
     except:
         x.connect(last)
@@ -63,16 +63,20 @@ def connectForAction(ssid):
         return True
     except:
         time.sleep(1)
-        disconnect()
+        disconnect(ssid)
         return False
     
-def disconnect():
+def disconnect(boardName):
     x = ww.WinWiFi
-    try:
-        x.disconnect()
-        return True
-    except:
-        return False
+    current = x.get_connected_interfaces()[0]._ssid
+    if current == boardName:       
+        try:
+            x.disconnect()
+            return True
+        except:
+            return False
+    else:
+        return "wasn't connected to board"
     
 def Tcp_connect( HostIp, Port ):
     global s
@@ -113,13 +117,13 @@ def checkConnection(boardName):
     try:      
         confirmation = Tcp_ReadNew()
         if(confirmation == "Yea boi"):
-            disconnect()
+            disconnect(boardName)
             return True
         else:
-            disconnect()
+            disconnect(boardName)
             return False
     except socket.timeout:
-        disconnect()
+        disconnect(boardName)
         return False
 
 def getPicture(boardName):
@@ -135,12 +139,12 @@ def getPicture(boardName):
             f.write(l)
             l = s.recv(1024)
         f.close()
-        disconnect()
+        disconnect(boardName)
         return text
     except socket.timeout:
         f.close()
-        disconnect()
-        return ""
+        disconnect(boardName)
+        return "failed"
     
 def startVideo(boardName, t, name):
     connectForAction(boardName)
@@ -166,25 +170,25 @@ def startVideo(boardName, t, name):
                         if(confirmation == "Recording"):
                             if(not os.path.exists(".\\tests\\" + name)):
                                 os.makedirs(".\\tests\\" + name + "\\")
-                            disconnect()
+                            disconnect(boardName)
                             return True
                         else:
-                            disconnect()
+                            disconnect(boardName)
                             return "Error in giving the name"
                     except socket.timeout:
-                        disconnect()
+                        disconnect(boardName)
                         return "Error in giving the name"
                 else:
-                    disconnect()
+                    disconnect(boardName)
                     return "Error in giving the time"
             except socket.timeout:
-                disconnect()
+                disconnect(boardName)
                 return "Error in giving the time"
         else:
-            disconnect()
+            disconnect(boardName)
             return "Couldn't send command"
     except socket.timeout:
-        disconnect()
+        disconnect(boardName)
         return "Couldn't send command"
     
 def getCsv(boardName, name):
@@ -202,11 +206,11 @@ def getCsv(boardName, name):
             f.write(l)
             l = s.recv(1024)
         f.close()
-        disconnect()
+        disconnect(boardName)
         return True
     except socket.timeout:
         f.close()
-        disconnect()
+        disconnect(boardName)
         return False
 
 def getVideo(boardName, name):
@@ -224,11 +228,11 @@ def getVideo(boardName, name):
             f.write(l)
             l = s.recv(1024)
         f.close()
-        disconnect()
+        disconnect(boardName)
         return True
     except socket.timeout:
         f.close()
-        disconnect()
+        disconnect(boardName)
         return False
     
     
@@ -242,7 +246,7 @@ def getDone(boardName):
     while (numDone > 0):
         
         numDone = numDone - 1
-    disconnect()
+    disconnect(boardName)
     return True
     
     
@@ -257,13 +261,19 @@ def areYouBoard(boardName):
     
     response = Tcp_ReadNew()
     if response == "Yes I am":
-        disconnect()
+        disconnect(boardName)
         return "connected"
     else:
-        disconnect()
+        disconnect(boardName)
         return "not a board"
 #print(connectToBoard("Tank01"))
-print(connectToBoard("Tank01"))
-print(getPicture("Tank01"))
+#print(connectToBoard("Tank01"))
+# =============================================================================
+# print(getPicture("Tank01"))
+# time.sleep(5)
+# =============================================================================
+print(startVideo("Tank01",10,"newestTest"))
+time.sleep(20)
+print(getVideo("Tank01","newestTest"))
 
 #print(connectNetwork("It Hurts When IP"))
