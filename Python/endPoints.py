@@ -4,9 +4,11 @@ Created on Mon Nov 18 11:27:13 2019
 
 @author: Brent
 """
-import matplotlib.pyplot as pl
 import fileManipulation as fm
+import matplotlib.pyplot as plt
 import numpy as np
+import matplotlib.collections as mcoll
+import matplotlib.path as mpath
 import os
 import bisect
 
@@ -14,6 +16,49 @@ import bisect
 DEBUG_PATH = "fish-tracker/"
 DEBUG_CSV_PATH = "fish-tracker/Python"
 PATH = "Python/"
+
+def colorline(
+    x, y, z=None, cmap=plt.get_cmap('copper'), norm=plt.Normalize(0.0, 1.0),
+        linewidth=3, alpha=1.0):
+    """
+    http://nbviewer.ipython.org/github/dpsanders/matplotlib-examples/blob/master/colorline.ipynb
+    http://matplotlib.org/examples/pylab_examples/multicolored_line.html
+    Plot a colored line with coordinates x and y
+    Optionally specify colors in the array z
+    Optionally specify a colormap, a norm function and a line width
+    """
+
+    # Default colors equally spaced on [0,1]:
+    if z is None:
+        z = np.linspace(0.0, 1.0, len(x))
+
+    # Special case if a single number:
+    if not hasattr(z, "__iter__"):  # to check for numerical input -- this is a hack
+        z = np.array([z])
+
+    z = np.asarray(z)
+
+    segments = make_segments(x, y)
+    lc = mcoll.LineCollection(segments, array=z, cmap=cmap, norm=norm,
+                              linewidth=linewidth, alpha=alpha)
+
+    ax = plt.gca()
+    ax.add_collection(lc)
+
+    return lc
+
+
+def make_segments(x, y):
+    """
+    Create list of line segments from x and y coordinates, in the correct format
+    for LineCollection: an array of the form numlines x (points per line) x 2 (x
+    and y) array
+    """
+
+    points = np.array([x, y]).T.reshape(-1, 1, 2)
+    segments = np.concatenate([points[:-1], points[1:]], axis=1)
+    return segments
+
 
 def endPoints(fileName, middle, outputName, fileType="csv"):
     debug = False
@@ -25,17 +70,33 @@ def endPoints(fileName, middle, outputName, fileType="csv"):
     yMax = np.max(allPoints[:,2])+50
     
     #for path of fish
-    pl.figure()
-    pl.rcParams.update({'font.size': 20})
-    pl.plot(allPoints[:,1],allPoints[:,2])
+    plt.figure()
+    plt.rcParams.update({'font.size': 20})
+    plt.plot(allPoints[:,1],allPoints[:,2])
+    colorline(allPoints[:,1],allPoints[:,2], np.linspace(0, 1000, len(allPoints[:,1])), cmap=plt.get_cmap('rainbow'), linewidth=2)
+    plt.show()
+
+    # gradient stuff... why blue?
+    # x = allPoints[:,1]
+    # y = allPoints[:,2]
+    ###nothis fig, ax = plt.subplots()
+
+    # path = mpath.Path(np.column_stack([x, y]))
+    # verts = path.interpolated(steps=3).vertices
+    # x, y = verts[:, 0], verts[:, 1]
+    # z = np.linspace(0, 1.0, 100)
+    # colorline(x, y, z, cmap=plt.get_cmap('cool'), linewidth=2)
+
+    # plt.show()
+
     if(fileType == "csv"):
-        pl.axis([0, xMax, 0, yMax])
+        plt.axis([0, xMax, 0, yMax])
     else:
-        pl.axis([0, xMax, -50, yMax])
-    pl.xlabel("x")
-    pl.ylabel("y")
-    pl.title("Path of Fish")
-    pl.savefig(outPath + "/"+ outputName + "_FishPath.jpg", bbox_inches="tight")
+        plt.axis([0, xMax, -50, yMax])
+    plt.xlabel("x")
+    plt.ylabel("y")
+    plt.title("Path of Fish")
+    plt.savefig(outPath + "/"+ outputName + "_FishPath.jpg", bbox_inches="tight")
     
     #number of entries to the top, 
     # 
@@ -86,4 +147,4 @@ def endPoints(fileName, middle, outputName, fileType="csv"):
 
     #
 
-endPoints("newTest.csv", 180, "newTest", fileType="csv")
+endPoints("newTest1.csv", 180, "newTest1", fileType="csv")
