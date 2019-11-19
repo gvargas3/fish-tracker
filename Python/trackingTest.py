@@ -81,16 +81,26 @@ def trackVideo(filePath, imagePath, testName):
 
         else:
             break
+
+    
+    # controls the level of smoothing
+    level = 10
+    smoothRange = range(-level, level+1)
     
     #For smoothing fish position
-    end = np.shape(allPoints)[0] - 2
-    i = 2
-    allPoints[:,2] = yMax - allPoints[:,2]
+    end = np.shape(allPoints)[0] - level
+    i = level+1
+    allPoints[:,2] = yMax - allPoints[:,2]  # flip 
     while i < end:
-        # allPoints[i][1] = np.floor((allPoints[i-1][1] + allPoints[i][1] + allPoints[i+1][1])/3)
-        # allPoints[i][2] = np.floor((allPoints[i-1][2] + allPoints[i][2] + allPoints[i+1][2])/3)
-        allPoints[i][1] = np.floor((allPoints[i-2][1] + allPoints[i-1][1] + allPoints[i][1] + allPoints[i+1][1] + allPoints[i+2][1])/5)
-        allPoints[i][2] = np.floor((allPoints[i-2][2] + allPoints[i-1][2] + allPoints[i][2] + allPoints[i+1][2] + allPoints[i+2][2])/5)
+        xSum = 0
+        ySum = 0
+        for n in smoothRange:
+            xSum = xSum + allPoints[i+n][1]
+            ySum = ySum + allPoints[i+n][2]
+        tot = len(smoothRange)
+        allPoints[i][1] = np.floor(xSum / tot) # average
+        allPoints[i][2] = np.floor(ySum / tot)
+
         i = i + 1
     
     #Writes points to csv file
@@ -105,4 +115,4 @@ def trackVideo(filePath, imagePath, testName):
     
     return
 
-trackVideo("fish-tracker/Python/testVid2.mp4", "fish-tracker/Python/brown.jpg", "fish-tracker/Python/newTest5")
+trackVideo("fish-tracker/Python/testVid2.mp4", "fish-tracker/Python/brown.jpg", "fish-tracker/Python/newTest")

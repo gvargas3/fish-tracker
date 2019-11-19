@@ -53,4 +53,4 @@ def endPoints(fileName, middle, outputName, fileType="csv"):
     print(timeTop+timeBottom)
     
 
-endPoints("fish-tracker/Python/newTest5.csv", 180, "newTest5", fileType="csv")
+endPoints("fish-tracker/Python/newTest.csv", 180, "newTest", fileType="csv")
