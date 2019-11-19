@@ -84,7 +84,7 @@ def endPoints(fileName, middle, outputName, fileType="csv"):
     # path = mpath.Path(np.column_stack([x, y]))
     # verts = path.interpolated(steps=3).vertices
     # x, y = verts[:, 0], verts[:, 1]
-    # z = np.linspace(0, 1.0, 100)
+    # z = np.linspace(0, 1.0, len(x))
     # colorline(x, y, z, cmap=plt.get_cmap('cool'), linewidth=2)
 
     # if the program wont start it is because the figure windows need to be closed
