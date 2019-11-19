@@ -84,7 +84,7 @@ def trackVideo(filePath, imagePath, testName):
 
     
     # controls the level of smoothing
-    level = 10
+    level = 5
     smoothRange = range(-level, level+1)
     
     #For smoothing fish position

@@ -75,18 +75,20 @@ def endPoints(fileName, middle, outputName, fileType="csv"):
     plt.plot(allPoints[:,1],allPoints[:,2])
     colorline(allPoints[:,1],allPoints[:,2], np.linspace(0, 1000, len(allPoints[:,1])), cmap=plt.get_cmap('rainbow'), linewidth=2)
     
-    # gradient stuff... why blue?
-    # x = allPoints[:,1]
-    # y = allPoints[:,2]
-    ###nothis fig, ax = plt.subplots()
+    # gradient stuff... not sure why it is always blue no matter the cmap...
+    # play around with that z=np.linespace 
+    x = allPoints[:,1]
+    y = allPoints[:,2]
+    ###This seems to cause an issue? fig, ax = plt.subplots()
 
-    # path = mpath.Path(np.column_stack([x, y]))
-    # verts = path.interpolated(steps=3).vertices
-    # x, y = verts[:, 0], verts[:, 1]
-    # z = np.linspace(0, 1.0, 100)
-    # colorline(x, y, z, cmap=plt.get_cmap('cool'), linewidth=2)
+    path = mpath.Path(np.column_stack([x, y]))
+    verts = path.interpolated(steps=3).vertices
+    x, y = verts[:, 0], verts[:, 1]
+    z = np.linspace(0, 1.0, 100)
+    colorline(x, y, z, cmap=plt.get_cmap('cool'), linewidth=2)
 
-    # plt.show()
+    # if the program wont start it is because the figure windows need to be closed
+    plt.show()
 
     if(fileType == "csv"):
         plt.axis([0, xMax, 0, yMax])
@@ -133,11 +135,24 @@ def endPoints(fileName, middle, outputName, fileType="csv"):
         if allPoints[index][2] >= middle and allPoints[index-1][2] < allPoints[index][2]:
             topEntries = topEntries + 1
 
+        if allPoints[index][2] <= middle and allPoints[index-1][2] > allPoints[index][2]:
+            bottomEntries = bottomEntries + 1
+
 
         index = index + 1
 
 
-    print(firstCross,topEntries,bottomEntries,topLatency,timeTop,timeBottom,totalTime)
+    print(topEntries,bottomEntries,topLatency,timeTop,timeBottom,totalTime)
+    
+    labels = 'Time in Top', 'Time in Bottom'
+    sizes = [timeTop, timeBottom]
+    fig1, ax1 = plt.subplots()
+    ax1.pie(sizes, labels=labels, autopct='%1.1f%%',
+             startangle=90)
+    ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+
+    plt.show()
+
     # top latency
 
     #
