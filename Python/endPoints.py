@@ -8,14 +8,19 @@ import matplotlib.pyplot as pl
 import fileManipulation as fm
 import numpy as np
 import os
+import bisect
 
-
+# change this path or add one
+DEBUG_PATH = "fish-tracker/"
+DEBUG_CSV_PATH = "fish-tracker/Python"
+PATH = "Python/"
 
 def endPoints(fileName, middle, outputName, fileType="csv"):
-    outPath = "fish-tracker/" + outputName
+    debug = False
+    outPath = DEBUG_PATH if debug else ""+outputName
     if(not os.path.exists(outPath)):
         os.makedirs(outPath + "/")
-    allPoints = fm.getDataFromFile(fileName, fileType)
+    allPoints = fm.getDataFromFile(DEBUG_CSV_PATH if debug else PATH+fileName, fileType)
     xMax = np.max(allPoints[:,1])+50
     yMax = np.max(allPoints[:,2])+50
     
@@ -32,7 +37,8 @@ def endPoints(fileName, middle, outputName, fileType="csv"):
     pl.title("Path of Fish")
     pl.savefig(outPath + "/"+ outputName + "_FishPath.jpg", bbox_inches="tight")
     
-    #for time in top
+    #number of entries to the top, 
+    # 
     timeTop = 0
     timeBottom = 0
     if allPoints[0][2] > middle:
@@ -41,16 +47,43 @@ def endPoints(fileName, middle, outputName, fileType="csv"):
         timeBottom = timeBottom + allPoints[0][0]
     index = 1
     end = np.shape(allPoints)[0]
+
+    #should be a way to do a logical operation to calculate the keys with values that corresponde to the endpoint's condition
+    #bisect operations?
+
+    # detect latency to the top (above middle)
+    firstCross = True
+    topEntries = 0
+    bottomEntries = 0
+
     while index < end:
-        if allPoints[index][2] > middle:
+
+        # top latency & time in top & bottom
+        if allPoints[index][2] >= middle:
+            if firstCross:
+                topLatency = allPoints[index][0]
+                firstCross = False
             timeTop = timeTop + (allPoints[index][0] - allPoints[index - 1][0])
         else:
             timeBottom = timeBottom + (allPoints[index][0] - allPoints[index - 1][0])
-        index = index + 1
-    
-    print(timeTop)
-    print(timeBottom)
-    print(timeTop+timeBottom)
-    
+        totalTime = timeTop + timeBottom # you'd think
 
-endPoints("fish-tracker/Python/newTest.csv", 180, "newTest", fileType="csv")
+        
+        # number of entries to the top & bottom
+        if allPoints[index][2] >= middle and allPoints[index-1][2] < allPoints[index][2]:
+            topEntries = topEntries + 1
+
+
+        index = index + 1
+
+
+    print(firstCross,topEntries,bottomEntries,topLatency,timeTop,timeBottom,totalTime)
+    # top latency
+
+    #
+
+    #
+
+    #
+
+endPoints("newTest.csv", 180, "newTest", fileType="csv")

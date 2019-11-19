@@ -115,4 +115,4 @@ def trackVideo(filePath, imagePath, testName):
     
     return
 
-trackVideo("fish-tracker/Python/testVid2.mp4", "fish-tracker/Python/brown.jpg", "fish-tracker/Python/newTest")
+trackVideo("Python/testVid.mp4", "Python/brown.jpg", "Python/newTest1")
