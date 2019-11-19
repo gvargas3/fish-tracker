@@ -74,8 +74,7 @@ def endPoints(fileName, middle, outputName, fileType="csv"):
     plt.rcParams.update({'font.size': 20})
     plt.plot(allPoints[:,1],allPoints[:,2])
     colorline(allPoints[:,1],allPoints[:,2], np.linspace(0, 1000, len(allPoints[:,1])), cmap=plt.get_cmap('rainbow'), linewidth=2)
-    plt.show()
-
+    
     # gradient stuff... why blue?
     # x = allPoints[:,1]
     # y = allPoints[:,2]
