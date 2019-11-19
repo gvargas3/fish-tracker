@@ -115,4 +115,5 @@ def trackVideo(filePath, imagePath, testName):
     
     return
 
+# did Python/ because I am working in the git repo's root directory
 trackVideo("Python/testVid.mp4", "Python/brown.jpg", "Python/newTest1")
