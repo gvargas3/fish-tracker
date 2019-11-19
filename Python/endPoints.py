@@ -77,18 +77,18 @@ def endPoints(fileName, middle, outputName, fileType="csv"):
     
     # gradient stuff... not sure why it is always blue no matter the cmap...
     # play around with that z=np.linespace 
-    x = allPoints[:,1]
-    y = allPoints[:,2]
+    # x = allPoints[:,1]
+    # y = allPoints[:,2]
     ###This seems to cause an issue? fig, ax = plt.subplots()
 
-    path = mpath.Path(np.column_stack([x, y]))
-    verts = path.interpolated(steps=3).vertices
-    x, y = verts[:, 0], verts[:, 1]
-    z = np.linspace(0, 1.0, 100)
-    colorline(x, y, z, cmap=plt.get_cmap('cool'), linewidth=2)
+    # path = mpath.Path(np.column_stack([x, y]))
+    # verts = path.interpolated(steps=3).vertices
+    # x, y = verts[:, 0], verts[:, 1]
+    # z = np.linspace(0, 1.0, 100)
+    # colorline(x, y, z, cmap=plt.get_cmap('cool'), linewidth=2)
 
     # if the program wont start it is because the figure windows need to be closed
-    plt.show()
+    # plt.show()
 
     if(fileType == "csv"):
         plt.axis([0, xMax, 0, yMax])
@@ -151,7 +151,8 @@ def endPoints(fileName, middle, outputName, fileType="csv"):
              startangle=90)
     ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
 
-    plt.show()
+    plt.show() #this will show the original path plot brent made and the pie
+    # the gradient plot is commented out for now. Cant seem to get it to work like how I want yet
 
     # top latency
 
