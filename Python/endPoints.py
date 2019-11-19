@@ -9,10 +9,12 @@ import fileManipulation as fm
 import numpy as np
 import os
 
+
+
 def endPoints(fileName, middle, outputName, fileType="csv"):
-    outPath = ".\\tests\\" + outputName
+    outPath = "fish-tracker/" + outputName
     if(not os.path.exists(outPath)):
-        os.makedirs(outPath + "\\")
+        os.makedirs(outPath + "/")
     allPoints = fm.getDataFromFile(fileName, fileType)
     xMax = np.max(allPoints[:,1])+50
     yMax = np.max(allPoints[:,2])+50
@@ -28,7 +30,7 @@ def endPoints(fileName, middle, outputName, fileType="csv"):
     pl.xlabel("x")
     pl.ylabel("y")
     pl.title("Path of Fish")
-    pl.savefig(outPath + "\\"+ outputName + "_FishPath.jpg", bbox_inches="tight")
+    pl.savefig(outPath + "/"+ outputName + "_FishPath.jpg", bbox_inches="tight")
     
     #for time in top
     timeTop = 0
@@ -50,4 +52,5 @@ def endPoints(fileName, middle, outputName, fileType="csv"):
     print(timeBottom)
     print(timeTop+timeBottom)
     
-endPoints("newTest.csv", 180, "little fish", fileType="csv")
+
+endPoints("fish-tracker/Python/newTest5.csv", 180, "newTest5", fileType="csv")

@@ -25,8 +25,9 @@ def trackVideo(filePath, imagePath, testName):
     xMax = np.shape(startFrame)[1]
     
     roi1 = image
+    
 # =============================================================================
-#     cv2.waitKey(0)
+# cv2.waitKey(0) not needed on macOS i guess
 # =============================================================================
     hsv_roi = cv2.cvtColor(roi1,cv2.COLOR_BGR2HSV)
     roi_hist = cv2.calcHist([hsv_roi],[0], None, [180], [0,180])
@@ -71,11 +72,11 @@ def trackVideo(filePath, imagePath, testName):
     ##############################################################################
                 
 # =============================================================================
-#             cv2.imshow("mask", mask)
-#             cv2.imshow("frame",frame)
-#             key = cv2.waitKey(60)
-#             if key == 27:
-#                 break          
+            # cv2.imshow("mask", mask)
+            # cv2.imshow("frame",frame)
+            # key = cv2.waitKey(60)
+            # if key == 27:
+            #     break          
 # =============================================================================
 
         else:
@@ -86,8 +87,10 @@ def trackVideo(filePath, imagePath, testName):
     i = 2
     allPoints[:,2] = yMax - allPoints[:,2]
     while i < end:
-        allPoints[i][1] = np.floor((allPoints[i-1][1] + allPoints[i][1] + allPoints[i+1][1])/3)
-        allPoints[i][2] = np.floor((allPoints[i-1][2] + allPoints[i][2] + allPoints[i+1][2])/3)
+        # allPoints[i][1] = np.floor((allPoints[i-1][1] + allPoints[i][1] + allPoints[i+1][1])/3)
+        # allPoints[i][2] = np.floor((allPoints[i-1][2] + allPoints[i][2] + allPoints[i+1][2])/3)
+        allPoints[i][1] = np.floor((allPoints[i-2][1] + allPoints[i-1][1] + allPoints[i][1] + allPoints[i+1][1] + allPoints[i+2][1])/5)
+        allPoints[i][2] = np.floor((allPoints[i-2][2] + allPoints[i-1][2] + allPoints[i][2] + allPoints[i+1][2] + allPoints[i+2][2])/5)
         i = i + 1
     
     #Writes points to csv file
@@ -98,8 +101,8 @@ def trackVideo(filePath, imagePath, testName):
             out.writerow(rows)    
     video.release()
     cv2.destroyAllWindows()
-
+    cv2.waitKey(1)
     
     return
 
-trackVideo("testVid2.mp4", "brown.jpg", "newTest")
+trackVideo("fish-tracker/Python/testVid2.mp4", "fish-tracker/Python/brown.jpg", "fish-tracker/Python/newTest5")
