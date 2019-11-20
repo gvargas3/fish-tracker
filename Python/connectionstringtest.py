@@ -1,15 +1,30 @@
 from __future__ import print_function
 import os
 import json
+import winwifi
+
 
 def getConnections(c):
     #Some code to query what PI boards are available and gets their names
-    connectionArray = ['Connection 1', 'Connection 2', 'Connection 3']
+    x = winwifi.WinWiFi()
+    netList = x.scan()
+    connectionArray=[]
+    for p in netList:
+        if p._ssid!='':
+            connectionArray.append(p._ssid)
+    
+    #['Connection 1', 'Connection 2', 'Connection 3']
+    print(connectionArray)
     return  connectionArray
 
-def connect(self,c):
+def connect(self,ssid):
+    x = winwifi.WinWiFi()
+    try:
+        x.connect(ssid)
+        return True
+    except:
+        return False
     #Need code to connect to the PI, c is the name of the wiFi connection the user chose
-    return c
 def saveCompletedTest(self):
     data = {}
     data['tests'] = []
@@ -27,3 +42,4 @@ def getScreenshot(self):
 
     filepath = 'images/test.jpg'
     return filepath
+#getConnections(0)

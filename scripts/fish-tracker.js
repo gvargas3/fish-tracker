@@ -1,6 +1,21 @@
 $(document).ready(function () 
 {
 console.log('Called fish-tracker');
+//Get network currently connected to
+var currentNetwork;
+var currentBoard;
+client.invoke("getCurrentNetwork", (error, network) => {
+  if(error) 
+  {
+    console.error(error);
+  } 
+  else 
+  {
+    currentNetwork = network;
+    currentBoard = network;
+    console.log('Current network:', currentNetwork);
+  }
+});
 /******************************* Nav Bar functionality **************************************************************/
 $('#home-nav').click(function()
 {
@@ -76,23 +91,53 @@ $('#content-holder').on('home-load', function(){
   
   formula.trigger('input');
 
+  //Test button functionality
   $('#test-btn').on('click', function(){
-    $('#content-holder').load('html/run-test.html', function(){
+    $('#content-holder').load('html/test-inputs.html', function(){
       $('#content-holder').trigger('test-page-load');
+    });
+  })
+
+  $('#video-test-btn').on('click', function(){
+    var duration = 10;
+    var name = 'video-test';
+    client.invoke("startVideo", duration, name, (error, res) => {
+      if(error) 
+      {
+        console.error(error);
+      } 
+      else 
+      {
+        console.log('Video test called');
+      }
     });
   })
 });
 
 /******************************* Connections Page functionality **************************************************************/
 $('#content-holder').on('connections-load', function(){
-  var getConBtn = $('#getConnectionsTest-btn');
+  var getConBtn = $('#refresh-btn');
   var connectBtn = $('#connectTest-btn');
   var connectionArray;
 
-  getConBtn.on('click', function() {
-    $('#calculator').hide();
-    connectBtn.show();
-    console.log(connectBtn);
+  client.invoke("getConnections", (error, connectionString) => {
+    if(error) 
+    {
+      console.error(error)
+    } 
+    else 
+    {
+      $.each(connectionString, function(i, connection)
+      {
+        console.log('connection ' + i + ':', connection);
+        $('#connections').append('<option>' + connection + '</option>')
+      });
+      connectBtn.show();
+      console.log('connection got back:',connectionString)
+    }
+  });
+
+  getConBtn.on('click', function(){
     client.invoke("getConnections", (error, connectionString) => {
       if(error) 
       {
@@ -100,29 +145,42 @@ $('#content-holder').on('connections-load', function(){
       } 
       else 
       {
+        $('#connections option').remove();
         $.each(connectionString, function(i, connection)
         {
-          $('#connection-holder').append('<li><input type="radio" name="connection-radio-button" string="' + connection + '">' + connection + '</li>')
+          console.log('connection ' + i + ':', connection);
+          $('#connections').append('<option>' + connection + '</option>')
         });
-        console.log(connectionString)
+        connectBtn.show();
+        console.log('connection got back:',connectionString)
       }
     });
   });
 
   connectBtn.on('click', function()
   {
-    var selection = $("input[name='connection-radio-button']:checked");
+    var selection = $('#connections').val()[0];
+    console.log('selection:', selection);
     
     if(selection.length > 0)
     {
-      client.invoke("connectToBoard", selection.attr('string'), (error, message) => {
+      client.invoke("connectToBoard", selection, (error, message) => {
         if(error) 
         {
           console.error(error)
         } 
         else 
         {
-          console.log(message)
+          console.log('message:',message);
+          currentBoard = selection;
+          if(message == 'connected')
+          {
+            console.log('Connection succeeded')
+          }
+          else
+          {
+            console.log('There was an error connecting to the board.');
+          }
         }
       });
     }
@@ -132,10 +190,43 @@ $('#content-holder').on('connections-load', function(){
     }
   });
 });
-
-/******************************* Run test functionality **************************************************************/
+/******************************* Test inputs functionality **************************************************************/
 $('#content-holder').on('test-page-load', function(){
-  client.invoke("getScreenshot", (error, filepath) => {
+  $('#submit-btn').on('click', function(){
+    var valid = true;
+    console.log('Submit button pressed')
+    if($('#hours').val() == 0 && $('#minutes').val() == 0)
+    {
+      valid = false;
+    }
+    if(/[\[\]:";*|\\<>?.\/]/.test($('#name').val()))
+    {
+      console.log('Name is not valid');
+      valid = false;
+    }
+    console.log('valid:', valid)
+    if(valid)
+    {
+      var seconds = 3600*Number($('#hours').val()) + 60*$('#minutes').val();
+      console.log('currentBoard', currentBoard);
+      console.log('time', seconds);
+      console.log('name:', $('#name').val());
+      client.invoke("startVideo", currentBoard, seconds, $('#name').val(), (error, res) => {
+        if(error) 
+        {
+          console.error(error);
+        } 
+        else 
+        {
+          console.log('Video test called');
+        }
+      });
+    }
+  });
+});
+/******************************* Box draw functionality **************************************************************/
+$('#content-holder').on('box-draw-load', function(){
+  client.invoke("getPicture", currentBoard, (error, filepath) => {
     if(error) 
     {
       console.error(error)
@@ -150,6 +241,17 @@ $('#content-holder').on('test-page-load', function(){
         if($('.rectangle').length > 0)
         {
           console.log('submit called')
+          var coords = [['10', '20'],['40','60']];
+          client.invoke("giveCoords", coords, (error, isGood) => {
+            if(error) 
+            {
+              console.error(error)
+            }
+            else
+            {
+              console.log('coordinates set:', isGood);
+            }
+          })
         }
         else
         {
@@ -238,6 +340,40 @@ var saveCompletedTest = function()
     else 
     {
       console.log(message)
+    }
+  });
+}
+/******************************* Connection functions **************************************************************/
+var connectToPrevWifi = function(){
+  client.invoke("connectNetwork", currentNetwork, (error, isConnected) => {
+    if(error) 
+    {
+      console.error(error);
+    } 
+    else 
+    {
+      console.log('Connected to network:', isConnected);
+    }
+  });
+}
+var connectToBoard = function(callBack){
+  console.log('Called connect to board');
+  client.invoke("connectNetwork", currentBoard, (error, isConnected) => {
+    if(error) 
+    {
+      console.error(error);
+    } 
+    else 
+    {
+      console.log('Connected to board:', isConnected);
+      if(isConnected)
+      {
+        callBack();
+      }
+      else
+      {
+        console.log('There was an error connecting to the board')
+      }
     }
   });
 }
