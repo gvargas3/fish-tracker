@@ -25,8 +25,9 @@ def trackVideo(filePath, imagePath, testName):
     xMax = np.shape(startFrame)[1]
     
     roi1 = image
+    
 # =============================================================================
-#     cv2.waitKey(0)
+# cv2.waitKey(0) not needed on macOS i guess
 # =============================================================================
     hsv_roi = cv2.cvtColor(roi1,cv2.COLOR_BGR2HSV)
     roi_hist = cv2.calcHist([hsv_roi],[0], None, [180], [0,180])
@@ -70,22 +71,36 @@ def trackVideo(filePath, imagePath, testName):
     ### above where it says: cv2.waitKey(0)#######################################
     ##############################################################################
                 
-            cv2.imshow("mask", mask)
-            cv2.imshow("frame",frame)
-            key = cv2.waitKey(60)
-            if key == 27:
-                break          
+# =============================================================================
+            # cv2.imshow("mask", mask)
+            # cv2.imshow("frame",frame)
+            # key = cv2.waitKey(60)
+            # if key == 27:
+            #     break          
+# =============================================================================
 
         else:
             break
+
+    
+    # controls the level of smoothing
+    level = 5
+    smoothRange = range(-level, level+1)
     
     #For smoothing fish position
-    end = np.shape(allPoints)[0] - 2
-    i = 2
-    allPoints[:,2] = yMax - allPoints[:,2]
+    end = np.shape(allPoints)[0] - level
+    i = level+1
+    allPoints[:,2] = yMax - allPoints[:,2]  # flip 
     while i < end:
-        allPoints[i][1] = np.floor((allPoints[i-1][1] + allPoints[i][1] + allPoints[i+1][1])/3)
-        allPoints[i][2] = np.floor((allPoints[i-1][2] + allPoints[i][2] + allPoints[i+1][2])/3)
+        xSum = 0
+        ySum = 0
+        for n in smoothRange:
+            xSum = xSum + allPoints[i+n][1]
+            ySum = ySum + allPoints[i+n][2]
+        tot = len(smoothRange)
+        allPoints[i][1] = np.floor(xSum / tot) # average
+        allPoints[i][2] = np.floor(ySum / tot)
+
         i = i + 1
     
     #Writes points to csv file
@@ -96,8 +111,9 @@ def trackVideo(filePath, imagePath, testName):
             out.writerow(rows)    
     video.release()
     cv2.destroyAllWindows()
-
+    cv2.waitKey(1)
     
     return
 
-trackVideo("testVid2.mp4", "brown.jpg", "newTest")
+# did Python/ because I am working in the git repo's root directory
+#trackVideo("Python/testVid.mp4", "Python/brown.jpg", "Python/newTest1")
