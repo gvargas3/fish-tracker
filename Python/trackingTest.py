@@ -70,13 +70,11 @@ def trackVideo(filePath, imagePath, testName):
     ### above where it says: cv2.waitKey(0)#######################################
     ##############################################################################
                 
-# =============================================================================
-#             cv2.imshow("mask", mask)
-#             cv2.imshow("frame",frame)
-#             key = cv2.waitKey(60)
-#             if key == 27:
-#                 break          
-# =============================================================================
+            cv2.imshow("mask", mask)
+            cv2.imshow("frame",frame)
+            key = cv2.waitKey(60)
+            if key == 27:
+                break          
 
         else:
             break
