@@ -6,11 +6,10 @@ Created on Wed Nov  6 13:11:47 2019
 """
 
 import winwifi as ww
-#import newestClient as nc
 import time
 import socket
 import os
-
+import json
 HOST_IP_ADDRESS = '169.254.0.1'
 PORT_NUM = 5005
 
@@ -36,8 +35,7 @@ def connectToBoard(ssid):
     try:
         last = x.get_connected_interfaces()[0]._ssid
         x.connect(ssid)
-        try:
-            
+        try:           
             Tcp_connect( HOST_IP_ADDRESS, PORT_NUM)
             Tcp_Write('Are You Bored?'+'~')
     
@@ -266,6 +264,42 @@ def areYouBoard(boardName):
     else:
         disconnect(boardName)
         return "not a board"
+    
+    
+def getConnections(c):
+    #Some code to query what PI boards are available and gets their names
+    x = ww.WinWiFi()
+    netList = x.scan()
+    connectionArray=[]
+    for p in netList:
+        if p._ssid!='':
+            connectionArray.append(p._ssid)
+    
+    #['Connection 1', 'Connection 2', 'Connection 3']
+    print(connectionArray)
+    return  connectionArray
+
+def connect(ssid):
+    x = ww.WinWiFi()
+    try:
+        x.connect(ssid)
+        return True
+    except:
+        return False
+def saveCompletedTest():
+    data = {}
+    data['tests'] = []
+    data['tests'].append({
+        'board': 'Board 1',
+        'duration': '60 minutes',
+        'time': 'Noon'
+    })
+
+    with open('temp\\completed-tests.txt', 'w') as outfile:
+        json.dump(data, outfile)
+        
+def giveCoords(array):
+    return
 #print(connectToBoard("Tank01"))
 #print(connectToBoard("Tank01"))
 # =============================================================================

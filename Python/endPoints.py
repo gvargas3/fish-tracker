@@ -15,19 +15,10 @@ import bisect
 # change this path or add one
 DEBUG_PATH = "fish-tracker/"
 DEBUG_CSV_PATH = "fish-tracker/Python"
-PATH = "Python/"
+#PATH = "Python/"
+PATH = "tests/"
 
-def colorline(
-    x, y, z=None, cmap=plt.get_cmap('copper'), norm=plt.Normalize(0.0, 1.0),
-        linewidth=3, alpha=1.0):
-    """
-    http://nbviewer.ipython.org/github/dpsanders/matplotlib-examples/blob/master/colorline.ipynb
-    http://matplotlib.org/examples/pylab_examples/multicolored_line.html
-    Plot a colored line with coordinates x and y
-    Optionally specify colors in the array z
-    Optionally specify a colormap, a norm function and a line width
-    """
-
+def colorline(x, y, z=None, cmap=plt.get_cmap('copper'), norm=plt.Normalize(0.0, 1.0), linewidth=4, alpha=1.0):
     # Default colors equally spaced on [0,1]:
     if z is None:
         z = np.linspace(0.0, 1.0, len(x))
@@ -39,14 +30,12 @@ def colorline(
     z = np.asarray(z)
 
     segments = make_segments(x, y)
-    lc = mcoll.LineCollection(segments, array=z, cmap=cmap, norm=norm,
-                              linewidth=linewidth, alpha=alpha)
+    lc = mcoll.LineCollection(segments, array=z, cmap=cmap, norm=norm, linewidth=linewidth, alpha=alpha)
 
     ax = plt.gca()
     ax.add_collection(lc)
 
     return lc
-
 
 def make_segments(x, y):
     """
@@ -54,7 +43,6 @@ def make_segments(x, y):
     for LineCollection: an array of the form numlines x (points per line) x 2 (x
     and y) array
     """
-
     points = np.array([x, y]).T.reshape(-1, 1, 2)
     segments = np.concatenate([points[:-1], points[1:]], axis=1)
     return segments
@@ -62,34 +50,23 @@ def make_segments(x, y):
 
 def endPoints(fileName, middle, outputName, fileType="csv"):
     debug = False
-    outPath = DEBUG_PATH if debug else ""+outputName
+    outPath = DEBUG_PATH if debug else PATH + outputName
     if(not os.path.exists(outPath)):
         os.makedirs(outPath + "/")
-    allPoints = fm.getDataFromFile(DEBUG_CSV_PATH if debug else PATH+fileName, fileType)
+    allPoints = fm.getDataFromFile(DEBUG_CSV_PATH if debug else fileName, fileType)
     xMax = np.max(allPoints[:,1])+50
     yMax = np.max(allPoints[:,2])+50
+    duration = allPoints[-1][0]/1000
+    duration = np.round(duration, decimals=1)
     
-    #for path of fish
-    plt.figure()
-    plt.rcParams.update({'font.size': 20})
-    plt.plot(allPoints[:,1],allPoints[:,2])
-    colorline(allPoints[:,1],allPoints[:,2], np.linspace(0, 1000, len(allPoints[:,1])), cmap=plt.get_cmap('rainbow'), linewidth=2)
-    
-    # gradient stuff... not sure why it is always blue no matter the cmap...
-    # play around with that z=np.linespace 
-    # x = allPoints[:,1]
-    # y = allPoints[:,2]
-    ###This seems to cause an issue? fig, ax = plt.subplots()
-
-    # path = mpath.Path(np.column_stack([x, y]))
-    # verts = path.interpolated(steps=3).vertices
-    # x, y = verts[:, 0], verts[:, 1]
-    # z = np.linspace(0, 1.0, len(x))
-    # colorline(x, y, z, cmap=plt.get_cmap('cool'), linewidth=2)
-
-    # if the program wont start it is because the figure windows need to be closed
-    # plt.show()
-
+    #for path of fish  
+    plt.figure(figsize=(10,10))
+    x = allPoints[:,1]
+    y = allPoints[:,2]
+    lc = colorline(x, y, cmap='cool')
+    cbar = plt.colorbar(lc,orientation='horizontal',pad=0.15,ticks=[0,.25,.5,.75,1])
+    cbar.set_ticklabels([0,duration/4,duration/2,3*duration/4,duration])
+    cbar.set_label("Time (minutes)")
     if(fileType == "csv"):
         plt.axis([0, xMax, 0, yMax])
     else:
@@ -98,6 +75,8 @@ def endPoints(fileName, middle, outputName, fileType="csv"):
     plt.ylabel("y")
     plt.title("Path of Fish")
     plt.savefig(outPath + "/"+ outputName + "_FishPath.jpg", bbox_inches="tight")
+    plt.show()
+    
     
     #number of entries to the top, 
     # 
@@ -144,13 +123,13 @@ def endPoints(fileName, middle, outputName, fileType="csv"):
 
     print(topEntries,bottomEntries,topLatency,timeTop,timeBottom,totalTime)
     
-    labels = 'Time in Top', 'Time in Bottom'
+    labels = 'Top', 'Bottom'
     sizes = [timeTop, timeBottom]
-    fig1, ax1 = plt.subplots()
+    fig1, ax1 = plt.subplots(figsize=(7,5))
     ax1.pie(sizes, labels=labels, autopct='%1.1f%%',
              startangle=90)
     ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
-
+    plt.title("Time Spent")
     plt.show() #this will show the original path plot brent made and the pie
     # the gradient plot is commented out for now. Cant seem to get it to work like how I want yet
 
@@ -162,4 +141,4 @@ def endPoints(fileName, middle, outputName, fileType="csv"):
 
     #
 
-endPoints("newTest1.csv", 180, "newTest1", fileType="csv")
+endPoints("newTest.csv", 180, "newTest1", fileType="csv")

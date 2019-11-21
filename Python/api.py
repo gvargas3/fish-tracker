@@ -1,35 +1,35 @@
 from __future__ import print_function
 from calc import calc as real_calc
-import connectionstringtest as connection
 import pythonMethods as pm
-import giveCoords as coords
+#import giveCoords as coords
 import fileManipulation as fileManip
 import trackingTest as tt
-#import newestClient as nc
 import sys
 import zerorpc
 
 class CalcApi(object):
-    def calc(self, text):
-        """based on the input text, return the int result"""
-        try:
-            print('In calculator')
-            return real_calc(text)
-        except Exception as e:
-            return 0.0
+# =============================================================================
+#     def calc(self, text):
+#         """based on the input text, return the int result"""
+#         try:
+#             print('In calculator')
+#             return real_calc(text)
+#         except:
+#             return 0.0
+# =============================================================================
     def getConnections(self):
         try:
-            return connection.getConnections(self)
-        except Exception as e:
+            return pm.getConnections(self)
+        except:
             return 0.0
     def connectToBoard(self, connectionName):
         try:
             return pm.connectToBoard(connectionName)
-        except Exception as e:
+        except:
             return 0.0
     def saveCompletedTest(self):
         try:
-            connection.saveCompletedTest(self)
+            pm.saveCompletedTest(self)
         except Exception as e:
             return e
     def getPicture(self, boardName):
@@ -39,7 +39,7 @@ class CalcApi(object):
             return e
     def giveCoords(self, array):
         try:
-            return coords.giveCoords(array)
+            return pm.giveCoords(array)
         except Exception as e:
             return e
     def getCurrentNetwork(self):
@@ -71,7 +71,7 @@ def parse_port():
     port = 4242
     try:
         port = int(sys.argv[1])
-    except Exception as e:
+    except:
         pass
     return '{}'.format(port)
 
