@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import matplotlib.collections as mcoll
 import matplotlib.path as mpath
+import matplotlib
 import os
 import bisect
 
@@ -49,6 +50,7 @@ def make_segments(x, y):
 
 
 def endPoints(fileName, middle, outputName, fileType="csv"):
+    matplotlib.rcParams.update({'font.size': 22}) 
     debug = False
     outPath = DEBUG_PATH if debug else PATH + outputName
     if(not os.path.exists(outPath)):
@@ -56,7 +58,7 @@ def endPoints(fileName, middle, outputName, fileType="csv"):
     allPoints = fm.getDataFromFile(DEBUG_CSV_PATH if debug else fileName, fileType)
     xMax = np.max(allPoints[:,1])+50
     yMax = np.max(allPoints[:,2])+50
-    duration = allPoints[-1][0]/1000
+    duration = allPoints[-1][0]/60000
     duration = np.round(duration, decimals=1)
     
     #for path of fish  
@@ -65,7 +67,7 @@ def endPoints(fileName, middle, outputName, fileType="csv"):
     y = allPoints[:,2]
     lc = colorline(x, y, cmap='cool')
     cbar = plt.colorbar(lc,orientation='horizontal',pad=0.15,ticks=[0,.25,.5,.75,1])
-    cbar.set_ticklabels([0,duration/4,duration/2,3*duration/4,duration])
+    cbar.set_ticklabels([0,np.round(duration/4,decimals=2),duration/2,np.round(3*duration/4,decimals=2),duration])
     cbar.set_label("Time (minutes)")
     if(fileType == "csv"):
         plt.axis([0, xMax, 0, yMax])
@@ -96,9 +98,10 @@ def endPoints(fileName, middle, outputName, fileType="csv"):
     firstCross = True
     topEntries = 0
     bottomEntries = 0
+    topDist = 0
+    bottomDist = 0
 
     while index < end:
-
         # top latency & time in top & bottom
         if allPoints[index][2] >= middle:
             if firstCross:
@@ -117,23 +120,40 @@ def endPoints(fileName, middle, outputName, fileType="csv"):
         if allPoints[index][2] <= middle and allPoints[index-1][2] > allPoints[index][2]:
             bottomEntries = bottomEntries + 1
 
-
+        if allPoints[index][2] >= middle and index > 0:
+            topDist = topDist + np.linalg.norm(allPoints[index][1:3]-allPoints[index-1][1:3])
+        else:
+            bottomDist = bottomDist + np.linalg.norm(allPoints[index][1:3]-allPoints[index-1][1:3])
         index = index + 1
 
 
     print(topEntries,bottomEntries,topLatency,timeTop,timeBottom,totalTime)
+    totalDist = topDist + bottomDist
     
-    labels = 'Top', 'Bottom'
-    sizes = [timeTop, timeBottom]
-    fig1, ax1 = plt.subplots(figsize=(7,5))
-    ax1.pie(sizes, labels=labels, autopct='%1.1f%%',
-             startangle=90)
-    ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
-    plt.title("Time Spent")
-    plt.show() #this will show the original path plot brent made and the pie
-    # the gradient plot is commented out for now. Cant seem to get it to work like how I want yet
-
+    
+    #Shows the time spent in top and bottom in a bar graph
+    plt.figure(figsize=(8,8))
+    sizes = [np.round(timeTop/1000), np.round(timeBottom/1000)]
+    y_pos = np.arange(2)   
+    plt.bar(y_pos, sizes, align='center', alpha=0.5, color=('blue','orange'))
+    plt.xticks(y_pos, ['Top','Bottom'])
+    plt.ylabel('seconds')
+    plt.title('Time Spent')
+    plt.savefig(outPath + "/"+ outputName + "_TimeSpent.jpg", bbox_inches="tight")
+    plt.show()
+    
+    #Shows distance traveled in top and bottom of tank
+    plt.figure(figsize=(8,8))
+    distance = [np.round(topDist/1000, decimals=2), np.round(bottomDist/1000,decimals=2)]
+    y_pos = np.arange(2)    
+    plt.bar(y_pos, distance, align='center', alpha=0.5, color=('blue','orange'))
+    plt.xticks(y_pos, ['Top','Bottom'])
+    plt.ylabel('pixels, in thousands')
+    plt.title('Distance Traveled')
+    plt.savefig(outPath + "/"+ outputName + "_DistanceTraveled.jpg", bbox_inches="tight")
+    plt.show()
     # top latency
+    
 
     #
 
@@ -141,4 +161,4 @@ def endPoints(fileName, middle, outputName, fileType="csv"):
 
     #
 
-endPoints("newTest.csv", 180, "newTest1", fileType="csv")
+endPoints("testes.csv", 180, "newTestes", fileType="csv")

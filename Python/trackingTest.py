@@ -11,7 +11,7 @@ import numpy as np
 import matplotlib.pyplot as pl
 import csv
 
-def trackVideo(filePath, imagePath, testName):
+def trackVideo(filePath, imagePath, resultPath):
     video = cv2.VideoCapture(filePath)
     image = cv2.imread(imagePath)
     _, startFrame = video.read()
@@ -104,7 +104,7 @@ def trackVideo(filePath, imagePath, testName):
         i = i + 1
     
     #Writes points to csv file
-    with open(testName + '.csv','w',newline='') as f:
+    with open(resultPath + '.csv','w',newline='') as f:
         out = csv.writer(f, delimiter=',',quoting=csv.QUOTE_MINIMAL)
         #output = csv.DictWriter(f,delimiter=',', fieldnames=allPoints)
         for rows in allPoints:
@@ -117,3 +117,4 @@ def trackVideo(filePath, imagePath, testName):
 
 # did Python/ because I am working in the git repo's root directory
 #trackVideo("Python/testVid.mp4", "Python/brown.jpg", "Python/newTest1")
+#trackVideo("testVid.mp4","brown.jpg","testes")
