@@ -44,14 +44,18 @@ def connectToBoard(ssid):
                 disconnect(ssid)
                 return "connected"
             else:
-                disconnect(ssid)
+                if(last != ssid):
+                    disconnect(ssid)
                 return "not a board"
         except:
-            time.sleep(1)
-            disconnect(ssid)
+            time.sleep(0.5)
+            print(last,ssid)
+            if(last != ssid):
+                disconnect(ssid)
             return "could not connect socket"
     except:
-        x.connect(last)
+        if(last != ssid):
+            disconnect(ssid)
         return "could not connect to access point"
     
 def connectForAction(ssid):
@@ -241,8 +245,7 @@ def getDone(boardName):
     numDone = int(Tcp_ReadNew())
     
     print(numDone)
-    while (numDone > 0):
-        
+    while (numDone > 0):        
         numDone = numDone - 1
     disconnect(boardName)
     return True

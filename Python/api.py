@@ -1,5 +1,5 @@
 from __future__ import print_function
-from calc import calc as real_calc
+#from calc import calc as real_calc
 import pythonMethods as pm
 #import giveCoords as coords
 import fileManipulation as fileManip
