@@ -12,7 +12,7 @@ client.invoke("getCurrentNetwork", (error, network) => {
   else 
   {
     currentNetwork = network;
-    currentBoard = network;
+    currentBoard = '';
     console.log('Current network:', currentNetwork);
   }
 });
@@ -27,6 +27,30 @@ $('#home-nav').click(function()
 
     $('#content-holder').load('html/home.html', function(){
       $('#content-holder').trigger('home-load');
+    });
+  }
+});
+
+$('#test-nav').click(function()
+{
+  if(!$('#test-nav').parent().is('.active'))
+  {
+    $('.nav-item').removeClass('active');
+    $('#alert-div').removeClass('active');
+    $('#test-nav').parent().addClass('active');
+
+    console.log('current board: ', currentBoard)
+    
+    $('#content-holder').load('html/test-inputs.html', function(){
+      if(currentBoard.length > 0)
+      {
+        $('#content-holder').trigger('test-page-load');
+      }
+      else
+      {
+        $('form').hide();
+        $('#no-board-message').show();
+      }
     });
   }
 });
@@ -91,7 +115,7 @@ $('#content-holder').on('home-load', function(){
     var name = 'video-test';
 
     $('#content-holder').load('html/box-draw.html', function(){
-      $('#content-holder').trigger('box-draw-load');
+      loadDraw();
     });
     // client.invoke("startVideo", duration, name, (error, res) => {
     //   if(error) 
@@ -135,7 +159,7 @@ $('#content-holder').on('connections-load', function(){
   getConBtn.on('click', function(){
     $('.loader').show();
     $('#connections option').remove();
-    
+
     client.invoke("getConnections", (error, connectionString) => {
       if(error) 
       {
@@ -209,21 +233,25 @@ $('#content-holder').on('test-page-load', function(){
       console.log('currentBoard', currentBoard);
       console.log('time', seconds);
       console.log('name:', $('#name').val());
-      client.invoke("startVideo", currentBoard, seconds, $('#name').val(), (error, res) => {
-        if(error) 
-        {
-          console.error(error);
-        } 
-        else 
-        {
-          console.log('Video test called');
-        }
+      $('#content-holder').load('html/box-draw.html', function(){
+        loadDraw(currentBoard, seconds, $('#name').val());
       });
+      
+      // client.invoke("startVideo", currentBoard, seconds, $('#name').val(), (error, res) => {
+      //   if(error) 
+      //   {
+      //     console.error(error);
+      //   } 
+      //   else 
+      //   {
+      //     console.log('Video test called');
+      //   }
+      // });
     }
   });
 });
 /******************************* Box draw functionality **************************************************************/
-$('#content-holder').on('box-draw-load', function(){
+var loadDraw = function(board,time,name){
   $('.loader').show();
   client.invoke("getPicture", currentBoard, (error, filepath) => {
     if(error) 
@@ -241,7 +269,7 @@ $('#content-holder').on('box-draw-load', function(){
         if($('.set').length > 0)
         {
           console.log('submit called')
-          var imagePercent = 100*($('.set')[0].getBoundingClientRect().top - $('#screenshot')[0].getBoundingClientRect().top)/$('#screenshot').height();
+          var imagePercent = ($('.set')[0].getBoundingClientRect().top - $('#screenshot')[0].getBoundingClientRect().top)/$('#screenshot').height();
           console.log('Image percent: ', imagePercent);
           var coords = [['10', '20'],['40','60']];
           client.invoke("giveCoords", coords, (error, isGood) => {
@@ -263,7 +291,7 @@ $('#content-holder').on('box-draw-load', function(){
       });
     }
   });
-});
+};
 
 /******************************* Completed Tests functionality **************************************************************/
 $('#content-holder').on('completed-tests-load', function(){
