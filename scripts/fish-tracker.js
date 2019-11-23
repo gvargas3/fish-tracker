@@ -79,18 +79,6 @@ $('#content-holder').on('home-load', function(){
   let formula = $('#formula');
   let result = $('#result');
 
-  formula.on('input', () => {
-    client.invoke("calc", formula.val(), (error, res) => {
-      if(error) {
-        console.error(error);
-      } else {
-        result.text(res);
-      }
-    });
-  });
-  
-  formula.trigger('input');
-
   //Test button functionality
   $('#test-btn').on('click', function(){
     $('#content-holder').load('html/test-inputs.html', function(){
@@ -101,16 +89,20 @@ $('#content-holder').on('home-load', function(){
   $('#video-test-btn').on('click', function(){
     var duration = 10;
     var name = 'video-test';
-    client.invoke("startVideo", duration, name, (error, res) => {
-      if(error) 
-      {
-        console.error(error);
-      } 
-      else 
-      {
-        console.log('Video test called');
-      }
+
+    $('#content-holder').load('html/box-draw.html', function(){
+      $('#content-holder').trigger('box-draw-load');
     });
+    // client.invoke("startVideo", duration, name, (error, res) => {
+    //   if(error) 
+    //   {
+    //     console.error(error);
+    //   } 
+    //   else 
+    //   {
+    //     console.log('Video test called');
+    //   }
+    // });
   })
 });
 
@@ -238,9 +230,11 @@ $('#content-holder').on('box-draw-load', function(){
       initDraw($('#canvas'));
 
       $('#submit-btn').on('click', function(){
-        if($('.rectangle').length > 0)
+        if($('.set').length > 0)
         {
           console.log('submit called')
+          var imagePercent = 100*($('.set')[0].getBoundingClientRect().top - $('#screenshot')[0].getBoundingClientRect().top)/$('#screenshot').height();
+          console.log('Image percent: ', imagePercent);
           var coords = [['10', '20'],['40','60']];
           client.invoke("giveCoords", coords, (error, isGood) => {
             if(error) 
@@ -280,6 +274,9 @@ $('#content-holder').on('completed-tests-load', function(){
 
 /******************************* Drawing a box on image for ML algorithm **************************************************************/
 var initDraw = function(canvas) {
+  canvas.css('cursor','hidden');
+  var image = $('#screenshot');
+  var imagePercent;
   function setMousePosition(e) {
       var ev = e || window.event; 
       if (ev.pageX) 
@@ -291,41 +288,36 @@ var initDraw = function(canvas) {
 
   var mouse = {
       x: 0,
-      y: 0,
-      startX: 0,
-      startY: 0
+      y: 0
   };
-  var element = null;
 
+  element = $('<div></div>');
+  element.addClass('rectangle').addClass('cursor');
+  canvas.append(element);
   canvas.on('mousemove', function (e) {
       setMousePosition(e);
-      if (element !== null) 
-      {
-        element.css('width',Math.abs(mouse.x - mouse.startX) + 'px');
-        element.css('height',Math.abs(mouse.y - mouse.startY) + 'px');
-        element.css('left',(mouse.x - mouse.startX < 0) ? mouse.x + 'px' : mouse.startX + 'px');
-        element.css('top',(mouse.y - mouse.startY < 0) ? mouse.y + 'px' : mouse.startY + 'px');
-      }
+
+      element.css('width',100*image.width()/$(window).width() + '%');
+      element.css('height','1%');
+      element.css('top',100*mouse.y/$(window).height() + '%');
+
+      $('.set').css('width',100*image.width()/$(window).width() + '%');
+      $('.set').css('top',(image[0].getBoundingClientRect().top + image.height()*imagePercent/100) + 'px');
   });
 
   canvas.on('click', function (e) {
-    if (element !== null) 
-    {
-      element = null;
-      canvas.css('cursor','default');
-    } 
-    else 
-    {
-      mouse.startX = mouse.x;
-      mouse.startY = mouse.y;
-      $('.rectangle').remove();
-      element = $('<div></div>');
-      element.addClass('rectangle');
-      element.css('left',mouse.x + 'px');
-      element.css('top',mouse.y + 'px');
-      canvas.append(element);
-      canvas.css('cursor','crosshair');
-    }
+    $('.set').remove();
+    imagePercent = 100*(element[0].getBoundingClientRect().top - image[0].getBoundingClientRect().top)/image.height();
+    element.addClass('set').removeClass('cursor');
+    element = null;
+    element = $('<div></div>');
+    element.addClass('rectangle').addClass('cursor');
+    canvas.append(element);
+    //$('.rectangle').remove();
+    //element = $('<div></div>');
+    //element.addClass('rectangle');
+    //element.css('left',mouse.x + 'px');
+    //element.css('top',mouse.y + 'px');
   });
 }
 
@@ -376,5 +368,10 @@ var connectToBoard = function(callBack){
       }
     }
   });
+}
+
+var showLoader = function()
+{
+
 }
 });

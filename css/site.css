@@ -58,5 +58,22 @@ ul {
 }
 .rectangle {
   border: 1px solid #FF0000;
+  background-color: red;
   position: absolute;
+}
+.rectangle.cursor {
+  opacity: .5;
+}
+.rectangle.set {
+  opacity: 1;
+}
+/******* Loader *********/
+.loader {
+  border: 16px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 16px solid #3498db;
+  width: 120px;
+  height: 120px;
+  -webkit-animation: spin 2s linear infinite; /* Safari */
+  animation: spin 2s linear infinite;
 }

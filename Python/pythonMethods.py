@@ -129,24 +129,25 @@ def checkConnection(boardName):
         return False
 
 def getPicture(boardName):
-    connectForAction(boardName)
-    Tcp_connect( HOST_IP_ADDRESS, PORT_NUM)
-    Tcp_Write('gimmePic~')
-    text='.\\tests\\frame.jpg'
-    f = open(text, 'wb')
-    s.settimeout(10)
-    try:       
-        l = s.recv(1024)
-        while (l):
-            f.write(l)
-            l = s.recv(1024)
-        f.close()
-        disconnect(boardName)
-        return text
-    except socket.timeout:
-        f.close()
-        disconnect(boardName)
-        return "failed"
+    return 'images\\test.jpg'
+    # connectForAction(boardName)
+    # Tcp_connect( HOST_IP_ADDRESS, PORT_NUM)
+    # Tcp_Write('gimmePic~')
+    # text='.\\tests\\frame.jpg'
+    # f = open(text, 'wb')
+    # s.settimeout(10)
+    # try:       
+    #     l = s.recv(1024)
+    #     while (l):
+    #         f.write(l)
+    #         l = s.recv(1024)
+    #     f.close()
+    #     disconnect(boardName)
+    #     return text
+    # except socket.timeout:
+    #     f.close()
+    #     disconnect(boardName)
+    #     return "failed"
     
 def startVideo(boardName, t, name):
     connectForAction(boardName)
@@ -289,7 +290,7 @@ def connect(ssid):
         return True
     except:
         return False
-def saveCompletedTest():
+def saveCompletedTest(c):
     data = {}
     data['tests'] = []
     data['tests'].append({

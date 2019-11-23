@@ -3,7 +3,6 @@ from __future__ import print_function
 import pythonMethods as pm
 #import giveCoords as coords
 import fileManipulation as fileManip
-import trackingTest as tt
 import sys
 import zerorpc
 
@@ -27,11 +26,6 @@ class CalcApi(object):
             return pm.connectToBoard(connectionName)
         except:
             return 0.0
-    def saveCompletedTest(self):
-        try:
-            pm.saveCompletedTest(self)
-        except Exception as e:
-            return e
     def getPicture(self, boardName):
         try:
             return pm.getPicture(boardName)
