@@ -22,6 +22,12 @@ ul {
 .nav-item.disabled {
   cursor: default;
 }
+#board-div{
+  color: white;
+  padding-left: 10%;
+  white-space: nowrap;
+  display: none;
+}
 #alert-div {
   width: 8.3em;
   cursor: pointer;

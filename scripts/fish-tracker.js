@@ -195,6 +195,7 @@ $('#content-holder').on('connections-load', function(){
         {
           console.log('message:',message);
           currentBoard = selection;
+          $('#board-div').show().text('Connect to: ' + selection);
           if(message == 'connected')
           {
             console.log('Connection succeeded')
