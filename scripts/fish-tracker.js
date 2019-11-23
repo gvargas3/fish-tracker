@@ -112,6 +112,8 @@ $('#content-holder').on('connections-load', function(){
   var connectBtn = $('#connectTest-btn');
   var connectionArray;
 
+  $('.loader').show();
+
   client.invoke("getConnections", (error, connectionString) => {
     if(error) 
     {
@@ -119,6 +121,7 @@ $('#content-holder').on('connections-load', function(){
     } 
     else 
     {
+      $('.loader').hide();
       $.each(connectionString, function(i, connection)
       {
         console.log('connection ' + i + ':', connection);
@@ -130,6 +133,9 @@ $('#content-holder').on('connections-load', function(){
   });
 
   getConBtn.on('click', function(){
+    $('.loader').show();
+    $('#connections option').remove();
+    
     client.invoke("getConnections", (error, connectionString) => {
       if(error) 
       {
@@ -137,7 +143,7 @@ $('#content-holder').on('connections-load', function(){
       } 
       else 
       {
-        $('#connections option').remove();
+        $('.loader').hide();
         $.each(connectionString, function(i, connection)
         {
           console.log('connection ' + i + ':', connection);
@@ -218,6 +224,7 @@ $('#content-holder').on('test-page-load', function(){
 });
 /******************************* Box draw functionality **************************************************************/
 $('#content-holder').on('box-draw-load', function(){
+  $('.loader').show();
   client.invoke("getPicture", currentBoard, (error, filepath) => {
     if(error) 
     {
@@ -226,6 +233,7 @@ $('#content-holder').on('box-draw-load', function(){
     else 
     {
       console.log('filepath:',filepath)
+      $('.loader').hide();
       $('#screenshot').attr('src', filepath);
       initDraw($('#canvas'));
 
@@ -313,11 +321,6 @@ var initDraw = function(canvas) {
     element = $('<div></div>');
     element.addClass('rectangle').addClass('cursor');
     canvas.append(element);
-    //$('.rectangle').remove();
-    //element = $('<div></div>');
-    //element.addClass('rectangle');
-    //element.css('left',mouse.x + 'px');
-    //element.css('top',mouse.y + 'px');
   });
 }
 
@@ -368,10 +371,5 @@ var connectToBoard = function(callBack){
       }
     }
   });
-}
-
-var showLoader = function()
-{
-
 }
 });
