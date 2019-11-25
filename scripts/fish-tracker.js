@@ -273,14 +273,15 @@ var loadDraw = function(board,time,name){
           var imagePercent = ($('.set')[0].getBoundingClientRect().top - $('#screenshot')[0].getBoundingClientRect().top)/$('#screenshot').height();
           console.log('Image percent: ', imagePercent);
           var coords = [['10', '20'],['40','60']];
-          client.invoke("giveCoords", coords, (error, isGood) => {
+          client.invoke("startVideo", currentBoard, time, name, imagePercent, (error, isGood) => {
             if(error) 
             {
               console.error(error)
             }
             else
             {
-              console.log('coordinates set:', isGood);
+              console.log('Video started:', isGood);
+              
             }
           })
         }
