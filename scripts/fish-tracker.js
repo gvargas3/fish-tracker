@@ -262,7 +262,7 @@ var loadDraw = function(board,time,name){
     } 
     else 
     {
-      filepath = '.\\Python\\tests\\frame.jpg'
+      filepath = 'Python\\tests\\frame.jpg'
       console.log('filepath:',filepath)
       
       $('.loader').hide();
