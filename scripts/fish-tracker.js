@@ -12,7 +12,7 @@ client.invoke("getCurrentNetwork", (error, network) => {
   else 
   {
     currentNetwork = network;
-    currentBoard = network;
+    currentBoard = '';
     console.log('Current network:', currentNetwork);
   }
 });
@@ -27,6 +27,30 @@ $('#home-nav').click(function()
 
     $('#content-holder').load('html/home.html', function(){
       $('#content-holder').trigger('home-load');
+    });
+  }
+});
+
+$('#test-nav').click(function()
+{
+  if(!$('#test-nav').parent().is('.active'))
+  {
+    $('.nav-item').removeClass('active');
+    $('#alert-div').removeClass('active');
+    $('#test-nav').parent().addClass('active');
+
+    console.log('current board: ', currentBoard)
+    
+    $('#content-holder').load('html/test-inputs.html', function(){
+      if(currentBoard.length > 0)
+      {
+        $('#content-holder').trigger('test-page-load');
+      }
+      else
+      {
+        $('form').hide();
+        $('#no-board-message').show();
+      }
     });
   }
 });
@@ -79,18 +103,6 @@ $('#content-holder').on('home-load', function(){
   let formula = $('#formula');
   let result = $('#result');
 
-  formula.on('input', () => {
-    client.invoke("calc", formula.val(), (error, res) => {
-      if(error) {
-        console.error(error);
-      } else {
-        result.text(res);
-      }
-    });
-  });
-  
-  formula.trigger('input');
-
   //Test button functionality
   $('#test-btn').on('click', function(){
     $('#content-holder').load('html/test-inputs.html', function(){
@@ -101,16 +113,20 @@ $('#content-holder').on('home-load', function(){
   $('#video-test-btn').on('click', function(){
     var duration = 10;
     var name = 'video-test';
-    client.invoke("startVideo", duration, name, (error, res) => {
-      if(error) 
-      {
-        console.error(error);
-      } 
-      else 
-      {
-        console.log('Video test called');
-      }
+
+    $('#content-holder').load('html/box-draw.html', function(){
+      loadDraw();
     });
+    // client.invoke("startVideo", duration, name, (error, res) => {
+    //   if(error) 
+    //   {
+    //     console.error(error);
+    //   } 
+    //   else 
+    //   {
+    //     console.log('Video test called');
+    //   }
+    // });
   })
 });
 
@@ -120,6 +136,8 @@ $('#content-holder').on('connections-load', function(){
   var connectBtn = $('#connectTest-btn');
   var connectionArray;
 
+  $('.loader').show();
+
   client.invoke("getConnections", (error, connectionString) => {
     if(error) 
     {
@@ -127,6 +145,7 @@ $('#content-holder').on('connections-load', function(){
     } 
     else 
     {
+      $('.loader').hide();
       $.each(connectionString, function(i, connection)
       {
         console.log('connection ' + i + ':', connection);
@@ -138,6 +157,9 @@ $('#content-holder').on('connections-load', function(){
   });
 
   getConBtn.on('click', function(){
+    $('.loader').show();
+    $('#connections option').remove();
+
     client.invoke("getConnections", (error, connectionString) => {
       if(error) 
       {
@@ -145,7 +167,7 @@ $('#content-holder').on('connections-load', function(){
       } 
       else 
       {
-        $('#connections option').remove();
+        $('.loader').hide();
         $.each(connectionString, function(i, connection)
         {
           console.log('connection ' + i + ':', connection);
@@ -173,6 +195,7 @@ $('#content-holder').on('connections-load', function(){
         {
           console.log('message:',message);
           currentBoard = selection;
+          $('#board-div').show().text('Connect to: ' + selection);
           if(message == 'connected')
           {
             console.log('Connection succeeded')
@@ -211,21 +234,26 @@ $('#content-holder').on('test-page-load', function(){
       console.log('currentBoard', currentBoard);
       console.log('time', seconds);
       console.log('name:', $('#name').val());
-      client.invoke("startVideo", currentBoard, seconds, $('#name').val(), (error, res) => {
-        if(error) 
-        {
-          console.error(error);
-        } 
-        else 
-        {
-          console.log('Video test called');
-        }
+      $('#content-holder').load('html/box-draw.html', function(){
+        loadDraw(currentBoard, seconds, $('#name').val());
       });
+      
+      // client.invoke("startVideo", currentBoard, seconds, $('#name').val(), (error, res) => {
+      //   if(error) 
+      //   {
+      //     console.error(error);
+      //   } 
+      //   else 
+      //   {
+      //     console.log('Video test called');
+      //   }
+      // });
     }
   });
 });
 /******************************* Box draw functionality **************************************************************/
-$('#content-holder').on('box-draw-load', function(){
+var loadDraw = function(board,time,name){
+  $('.loader').show();
   client.invoke("getPicture", currentBoard, (error, filepath) => {
     if(error) 
     {
@@ -234,13 +262,16 @@ $('#content-holder').on('box-draw-load', function(){
     else 
     {
       console.log('filepath:',filepath)
+      $('.loader').hide();
       $('#screenshot').attr('src', filepath);
       initDraw($('#canvas'));
 
       $('#submit-btn').on('click', function(){
-        if($('.rectangle').length > 0)
+        if($('.set').length > 0)
         {
           console.log('submit called')
+          var imagePercent = ($('.set')[0].getBoundingClientRect().top - $('#screenshot')[0].getBoundingClientRect().top)/$('#screenshot').height();
+          console.log('Image percent: ', imagePercent);
           var coords = [['10', '20'],['40','60']];
           client.invoke("giveCoords", coords, (error, isGood) => {
             if(error) 
@@ -261,7 +292,7 @@ $('#content-holder').on('box-draw-load', function(){
       });
     }
   });
-});
+};
 
 /******************************* Completed Tests functionality **************************************************************/
 $('#content-holder').on('completed-tests-load', function(){
@@ -280,6 +311,9 @@ $('#content-holder').on('completed-tests-load', function(){
 
 /******************************* Drawing a box on image for ML algorithm **************************************************************/
 var initDraw = function(canvas) {
+  canvas.css('cursor','hidden');
+  var image = $('#screenshot');
+  var imagePercent;
   function setMousePosition(e) {
       var ev = e || window.event; 
       if (ev.pageX) 
@@ -291,41 +325,31 @@ var initDraw = function(canvas) {
 
   var mouse = {
       x: 0,
-      y: 0,
-      startX: 0,
-      startY: 0
+      y: 0
   };
-  var element = null;
 
+  element = $('<div></div>');
+  element.addClass('rectangle').addClass('cursor');
+  canvas.append(element);
   canvas.on('mousemove', function (e) {
       setMousePosition(e);
-      if (element !== null) 
-      {
-        element.css('width',Math.abs(mouse.x - mouse.startX) + 'px');
-        element.css('height',Math.abs(mouse.y - mouse.startY) + 'px');
-        element.css('left',(mouse.x - mouse.startX < 0) ? mouse.x + 'px' : mouse.startX + 'px');
-        element.css('top',(mouse.y - mouse.startY < 0) ? mouse.y + 'px' : mouse.startY + 'px');
-      }
+
+      element.css('width',100*image.width()/$(window).width() + '%');
+      element.css('height','1%');
+      element.css('top',100*mouse.y/$(window).height() + '%');
+
+      $('.set').css('width',100*image.width()/$(window).width() + '%');
+      $('.set').css('top',(image[0].getBoundingClientRect().top + image.height()*imagePercent/100) + 'px');
   });
 
   canvas.on('click', function (e) {
-    if (element !== null) 
-    {
-      element = null;
-      canvas.css('cursor','default');
-    } 
-    else 
-    {
-      mouse.startX = mouse.x;
-      mouse.startY = mouse.y;
-      $('.rectangle').remove();
-      element = $('<div></div>');
-      element.addClass('rectangle');
-      element.css('left',mouse.x + 'px');
-      element.css('top',mouse.y + 'px');
-      canvas.append(element);
-      canvas.css('cursor','crosshair');
-    }
+    $('.set').remove();
+    imagePercent = 100*(element[0].getBoundingClientRect().top - image[0].getBoundingClientRect().top)/image.height();
+    element.addClass('set').removeClass('cursor');
+    element = null;
+    element = $('<div></div>');
+    element.addClass('rectangle').addClass('cursor');
+    canvas.append(element);
   });
 }
 
