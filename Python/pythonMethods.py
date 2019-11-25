@@ -64,6 +64,8 @@ def connectForAction(ssid):
     x = ww.WinWiFi
     try:
         x.connect(ssid)
+        time.sleep(1)
+        print('connected')
         return True
     except:
         time.sleep(1)
@@ -114,25 +116,28 @@ def Tcp_ReadNew( ):
         return "Failed"
 
 def getPicture(boardName):
-    return 'images\\test.jpg'
-    # connectForAction(boardName)
-    # Tcp_connect( HOST_IP_ADDRESS, PORT_NUM)
-    # Tcp_Write('gimmePic~')
-    # text='.\\tests\\frame.jpg'
-    # f = open(text, 'wb')
-    # s.settimeout(10)
-    # try:       
-    #     l = s.recv(1024)
-    #     while (l):
-    #         f.write(l)
-    #         l = s.recv(1024)
-    #     f.close()
-    #     disconnect(boardName)
-    #     return text
-    # except socket.timeout:
-    #     f.close()
-    #     disconnect(boardName)
-    #     return "failed"
+    print('connecting to board')
+    connectForAction(boardName)
+    print('now trying tcp')
+    Tcp_connect( HOST_IP_ADDRESS, PORT_NUM)
+    Tcp_Write('gimmePic~')
+    print('selecting file')
+    text='.\\tests\\frame.jpg'
+    print(text)
+    f = open(text, 'wb')
+    s.settimeout(10)
+    try:       
+        l = s.recv(1024)
+        while (l):
+            f.write(l)
+            l = s.recv(1024)
+        f.close()
+        disconnect(boardName)
+        return True
+    except socket.timeout:
+        f.close()
+        disconnect(boardName)
+        return False
     
 def startVideo(boardName, t, name, midpoint=0.5):
     connectForAction(boardName)
@@ -325,6 +330,6 @@ def giveCoords(array):
 # =============================================================================
 #print(getVideo("Tank01","newerTest"))
 #print(getCsv("Tank01","newerTest"))
-endPoints.endPoints('newerTest','newerTest',path=".\\tests\\"+'newerTest\\')
+#endPoints.endPoints('newerTest','newerTest',path=".\\tests\\"+'newerTest\\')
 
 #print(connectNetwork("It Hurts When IP"))

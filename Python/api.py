@@ -28,7 +28,9 @@ class CalcApi(object):
             return 0.0
     def getPicture(self, boardName):
         try:
+            print('trying')
             return pm.getPicture(boardName)
+            print('tried')
         except Exception as e:
             return e
     def giveCoords(self, array):

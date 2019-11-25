@@ -141,4 +141,4 @@ def trackVideo(filePath, imagePath, resultPath, dividerLine=0.5):
 # did Python/ because I am working in the git repo's root directory
 #trackVideo("Python/tests/newestTest/newestTest.mp4", "Python/folder.png", "Python/newTest")
 #trackVideo(".\\tests\\newestTest\\newestTest.mp4","folder.png","testes")
-#trackVideo(".\\tests\\newestTest\\testVid.mp4","brown.jpg","testes")
+#trackVideo("testVid.mp4","brown.jpg","testes")
