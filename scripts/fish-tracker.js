@@ -254,6 +254,7 @@ $('#content-holder').on('test-page-load', function(){
 /******************************* Box draw functionality **************************************************************/
 var loadDraw = function(board,time,name){
   $('.loader').show();
+  console.log('Current Board:',currentBoard)
   client.invoke("getPicture", currentBoard, (error, filepath) => {
     if(error) 
     {
@@ -261,7 +262,9 @@ var loadDraw = function(board,time,name){
     } 
     else 
     {
+      filepath = '.\\Python\\tests\\frame.jpg'
       console.log('filepath:',filepath)
+      
       $('.loader').hide();
       $('#screenshot').attr('src', filepath);
       initDraw($('#canvas'));
@@ -281,7 +284,6 @@ var loadDraw = function(board,time,name){
             else
             {
               console.log('Video started:', isGood);
-              
             }
           })
         }
