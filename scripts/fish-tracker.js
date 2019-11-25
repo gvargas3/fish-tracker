@@ -231,11 +231,12 @@ $('#content-holder').on('test-page-load', function(){
     if(valid)
     {
       var seconds = 3600*Number($('#hours').val()) + 60*$('#minutes').val();
+      var name = $('#name').val();
       console.log('currentBoard', currentBoard);
       console.log('time', seconds);
-      console.log('name:', $('#name').val());
       $('#content-holder').load('html/box-draw.html', function(){
-        loadDraw(currentBoard, seconds, $('#name').val());
+        console.log('name:', name);
+        loadDraw(currentBoard, seconds, name);
       });
       
       // client.invoke("startVideo", currentBoard, seconds, $('#name').val(), (error, res) => {
