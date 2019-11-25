@@ -52,9 +52,9 @@ class CalcApi(object):
             return pm.connectNetwork(ssid)
         except Exception as e:
             return e
-    def startVideo(self,boardName, t,name):
+    def startVideo(self,boardName, t,name, midpoint=0.5):
         try: 
-            return pm.startVideo(boardName, t,name)
+            return pm.startVideo(boardName, t,name,midpoint)
         except Exception as e:
             return e
     def getDataFromFile(self,path,fileType="csv"):

@@ -49,13 +49,13 @@ def make_segments(x, y):
     return segments
 
 
-def endPoints(fileName, middle, outputName, fileType="csv"):
+def endPoints(fileName, outputName, path="", fileType="csv"):
     matplotlib.rcParams.update({'font.size': 22}) 
     debug = False
-    outPath = DEBUG_PATH if debug else PATH + outputName
+    outPath = DEBUG_PATH if debug else path + outputName
     if(not os.path.exists(outPath)):
         os.makedirs(outPath + "/")
-    allPoints = fm.getDataFromFile(DEBUG_CSV_PATH if debug else fileName, fileType)
+    allPoints, middle = fm.getDataFromFile(DEBUG_CSV_PATH if debug else path + fileName, fileType)
     xMax = np.max(allPoints[:,1])+50
     yMax = np.max(allPoints[:,2])+50
     duration = allPoints[-1][0]/60000
@@ -76,7 +76,7 @@ def endPoints(fileName, middle, outputName, fileType="csv"):
     plt.xlabel("x")
     plt.ylabel("y")
     plt.title("Path of Fish")
-    plt.savefig(outPath + "/"+ outputName + "_FishPath.jpg", bbox_inches="tight")
+    plt.savefig(outPath + outputName + "_FishPath.jpg", bbox_inches="tight")
     plt.show()
     
     
@@ -100,6 +100,7 @@ def endPoints(fileName, middle, outputName, fileType="csv"):
     bottomEntries = 0
     topDist = 0
     bottomDist = 0
+    topLatency = 0
 
     while index < end:
         # top latency & time in top & bottom
@@ -161,4 +162,6 @@ def endPoints(fileName, middle, outputName, fileType="csv"):
 
     #
 
-endPoints("testes.csv", 180, "newTestes", fileType="csv")
+#endPoints(newestTest", "newestTest", fileType="csv")
+#endPoints("sample2", "newTestes", fileType= "txt")
+#endPoints("newestTest", "newTestes", path=".\\tests\\newestTest\\",fileType= "csv")
