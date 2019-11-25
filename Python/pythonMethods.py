@@ -63,8 +63,9 @@ def connectToBoard(ssid):
 def connectForAction(ssid):
     x = ww.WinWiFi
     try:
+        time.sleep(3)
         x.connect(ssid)
-        time.sleep(1)
+        time.sleep(3)
         print('connected')
         return True
     except:
@@ -86,6 +87,7 @@ def disconnect(boardName):
     
 def Tcp_connect( HostIp, Port ):
     global s
+    time.sleep(3)
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect((HostIp, Port))
     return
@@ -140,6 +142,7 @@ def getPicture(boardName):
         return False
     
 def startVideo(boardName, t, name, midpoint=0.5):
+    print(boardName," ",time,' ',name,' ',midpoint)
     connectForAction(boardName)
     print("trying video")
     Tcp_connect( HOST_IP_ADDRESS, PORT_NUM)
@@ -152,11 +155,13 @@ def startVideo(boardName, t, name, midpoint=0.5):
             Tcp_connect( HOST_IP_ADDRESS, PORT_NUM)
             Tcp_Write(str(t)+'~')
             s.settimeout(2)
+            print('time: ',t )
             try:      
                 confirmation = Tcp_ReadNew()
                 if(confirmation == "Name?"):
                     Tcp_connect( HOST_IP_ADDRESS, PORT_NUM)
                     Tcp_Write(name+'~')
+                    print('name: ',name)
                     s.settimeout(2)
                     try:      
                         confirmation = Tcp_ReadNew()
@@ -164,9 +169,11 @@ def startVideo(boardName, t, name, midpoint=0.5):
                             Tcp_connect( HOST_IP_ADDRESS, PORT_NUM)
                             Tcp_Write(str(midpoint)+'~')
                             s.settimeout(2)
+                            print('midpoint: ',midpoint)
                             try: 
                                 confirmation = Tcp_ReadNew()
                                 if(confirmation == "Recording"):
+                                    print('recording video')
                                     if(not os.path.exists(".\\tests\\" + name)):
                                         os.makedirs(".\\tests\\" + name + "\\")
                                     disconnect(boardName)
