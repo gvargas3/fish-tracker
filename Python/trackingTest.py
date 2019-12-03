@@ -10,8 +10,8 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as pl
 import csv
-
-def trackVideo(filePath, imagePath, resultPath):
+#
+def trackVideo(filePath, imagePath, resultPath, dividerLine=0.5): 
     video = cv2.VideoCapture(filePath)
     image = cv2.imread(imagePath)
     _, startFrame = video.read()
@@ -22,7 +22,13 @@ def trackVideo(filePath, imagePath, resultPath):
     
     #Length and width of video
     yMax = np.shape(startFrame)[0]
+    dividerLine = np.round(dividerLine * yMax)
     xMax = np.shape(startFrame)[1]
+    
+    boxWidth = (xMax / 8)
+    boxHeight = (yMax / 5)
+    #boxWidth = 60
+    #boxHeight = 40
     
     roi1 = image
     
@@ -47,7 +53,8 @@ def trackVideo(filePath, imagePath, resultPath):
             
             if (start):
                 try:
-                    _, track_window = cv2.meanShift(mask, (int(np.floor(np.mean(np.where(mask == 1)[1]))) - 60, int(np.floor(np.mean(np.where(mask == 1)[0]))) - 40,120,80), term_criteria)
+                    _, track_window = cv2.meanShift(mask, (int(np.round(np.mean(np.where(mask == 1)[1]))) - int(boxWidth), int(np.round(np.mean(np.where(mask == 1)[0]))) - int(boxHeight),int(boxWidth*2),int(boxHeight*2)), term_criteria)
+                    #_, track_window = cv2.meanShift(mask, (int(np.round(np.mean(np.where(mask == 1)[1]))) - 60, int(np.round(np.mean(np.where(mask == 1)[0]))) - 40,120,80), term_criteria)
                 except:
                     frameCount = frameCount + 1
                     continue
@@ -56,10 +63,24 @@ def trackVideo(filePath, imagePath, resultPath):
                     
             x,y,w,h = track_window
             cv2.rectangle(frame, (x,y), (x+w,y+h),(0,255,0),2)
+            cv2.rectangle(mask, (x,y), (x+w,y+h),(0,255,0),2)
+            trackRange = mask[y:y+h+1,x:x+w+1]
+            try:
+                pointX = int(x + np.round(np.mean(np.where(trackRange == 1)[1])))
+                pointY = int(y + np.round(np.mean(np.where(trackRange == 1)[0])))
+            except:
+                pointX = int(x + w/2)
+                pointY = int(y + h/2)
+            cv2.circle(frame, (pointX, pointY), 2, 255)
+            cv2.circle(mask, (pointX, pointY), 2, 255)
+            
+            #pointX = int(np.round(np.mean(np.where(mask == 1)[1])))
             cv2.circle(frame, (int(x + w/2), int(y + h/2)),2, 255)
             frameCount = frameCount + 1
-            timeStamp = np.floor(1000*frameCount/frameRate)
-            point = np.array([[timeStamp,int(x + w/2),int(y + h/2)]])    
+            timeStamp = np.round(1000*frameCount/frameRate)
+            
+            #point = np.array([[timeStamp,int(x + w/2),int(y + h/2)]])  
+            point = np.array([[timeStamp, pointX, pointY]])
             if start:
                 allPoints = point
                 start = False
@@ -72,25 +93,25 @@ def trackVideo(filePath, imagePath, resultPath):
     ##############################################################################
                 
 # =============================================================================
-            # cv2.imshow("mask", mask)
-            # cv2.imshow("frame",frame)
-            # key = cv2.waitKey(60)
-            # if key == 27:
-            #     break          
+            cv2.imshow("mask", mask)
+            cv2.imshow("frame",frame)
+            key = cv2.waitKey(60)
+            if key == 27:
+                break          
 # =============================================================================
 
         else:
             break
-
-    
+        
     # controls the level of smoothing
-    level = 5
+    level = 2
     smoothRange = range(-level, level+1)
     
     #For smoothing fish position
     end = np.shape(allPoints)[0] - level
     i = level+1
     allPoints[:,2] = yMax - allPoints[:,2]  # flip 
+    dividerLine = yMax - dividerLine
     while i < end:
         xSum = 0
         ySum = 0
@@ -98,8 +119,8 @@ def trackVideo(filePath, imagePath, resultPath):
             xSum = xSum + allPoints[i+n][1]
             ySum = ySum + allPoints[i+n][2]
         tot = len(smoothRange)
-        allPoints[i][1] = np.floor(xSum / tot) # average
-        allPoints[i][2] = np.floor(ySum / tot)
+        allPoints[i][1] = np.round(xSum / tot) # average
+        allPoints[i][2] = np.round(ySum / tot)
 
         i = i + 1
     
@@ -107,6 +128,8 @@ def trackVideo(filePath, imagePath, resultPath):
     with open(resultPath + '.csv','w',newline='') as f:
         out = csv.writer(f, delimiter=',',quoting=csv.QUOTE_MINIMAL)
         #output = csv.DictWriter(f,delimiter=',', fieldnames=allPoints)
+        midPoint = [1000,dividerLine,0]
+        out.writerow(midPoint)
         for rows in allPoints:
             out.writerow(rows)    
     video.release()
@@ -114,7 +137,8 @@ def trackVideo(filePath, imagePath, resultPath):
     cv2.waitKey(1)
     
     return
-
+#"C:\Users\Brent\Desktop\fish-tracker\Python\tests\newestTest\newestTest.mp4"
 # did Python/ because I am working in the git repo's root directory
-#trackVideo("Python/testVid.mp4", "Python/brown.jpg", "Python/newTest1")
+#trackVideo("Python/tests/newestTest/newestTest.mp4", "Python/folder.png", "Python/newTest")
+#trackVideo(".\\tests\\newestTest\\newestTest.mp4","folder.png","testes")
 #trackVideo("testVid.mp4","brown.jpg","testes")

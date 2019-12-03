@@ -10,6 +10,8 @@ import time
 import socket
 import os
 import json
+import trackingTest
+import endPoints
 HOST_IP_ADDRESS = '169.254.0.1'
 PORT_NUM = 5005
 
@@ -61,7 +63,10 @@ def connectToBoard(ssid):
 def connectForAction(ssid):
     x = ww.WinWiFi
     try:
+        time.sleep(3)
         x.connect(ssid)
+        time.sleep(3)
+        print('connected')
         return True
     except:
         time.sleep(1)
@@ -82,6 +87,7 @@ def disconnect(boardName):
     
 def Tcp_connect( HostIp, Port ):
     global s
+    time.sleep(3)
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect((HostIp, Port))
     return
@@ -111,45 +117,32 @@ def Tcp_ReadNew( ):
     except socket.timeout:
         return "Failed"
 
-def checkConnection(boardName):
+def getPicture(boardName):
+    print('connecting to board')
     connectForAction(boardName)
+    print('now trying tcp')
     Tcp_connect( HOST_IP_ADDRESS, PORT_NUM)
-    Tcp_Write("Are you there?~")
-    s.settimeout(2)
-    try:      
-        confirmation = Tcp_ReadNew()
-        if(confirmation == "Yea boi"):
-            disconnect(boardName)
-            return True
-        else:
-            disconnect(boardName)
-            return False
+    Tcp_Write('gimmePic~')
+    print('selecting file')
+    text='.\\tests\\frame.jpg'
+    print(text)
+    f = open(text, 'wb')
+    s.settimeout(10)
+    try:       
+        l = s.recv(1024)
+        while (l):
+            f.write(l)
+            l = s.recv(1024)
+        f.close()
+        disconnect(boardName)
+        return True
     except socket.timeout:
+        f.close()
         disconnect(boardName)
         return False
-
-def getPicture(boardName):
-    return 'images\\test.jpg'
-    # connectForAction(boardName)
-    # Tcp_connect( HOST_IP_ADDRESS, PORT_NUM)
-    # Tcp_Write('gimmePic~')
-    # text='.\\tests\\frame.jpg'
-    # f = open(text, 'wb')
-    # s.settimeout(10)
-    # try:       
-    #     l = s.recv(1024)
-    #     while (l):
-    #         f.write(l)
-    #         l = s.recv(1024)
-    #     f.close()
-    #     disconnect(boardName)
-    #     return text
-    # except socket.timeout:
-    #     f.close()
-    #     disconnect(boardName)
-    #     return "failed"
     
-def startVideo(boardName, t, name):
+def startVideo(boardName, t, name, midpoint=0.5):
+    print(boardName," ",time,' ',name,' ',midpoint)
     connectForAction(boardName)
     print("trying video")
     Tcp_connect( HOST_IP_ADDRESS, PORT_NUM)
@@ -162,22 +155,38 @@ def startVideo(boardName, t, name):
             Tcp_connect( HOST_IP_ADDRESS, PORT_NUM)
             Tcp_Write(str(t)+'~')
             s.settimeout(2)
+            print('time: ',t )
             try:      
                 confirmation = Tcp_ReadNew()
                 if(confirmation == "Name?"):
                     Tcp_connect( HOST_IP_ADDRESS, PORT_NUM)
                     Tcp_Write(name+'~')
+                    print('name: ',name)
                     s.settimeout(2)
                     try:      
                         confirmation = Tcp_ReadNew()
-                        if(confirmation == "Recording"):
-                            if(not os.path.exists(".\\tests\\" + name)):
-                                os.makedirs(".\\tests\\" + name + "\\")
-                            disconnect(boardName)
-                            return True
+                        if(confirmation == 'Midpoint?'):
+                            Tcp_connect( HOST_IP_ADDRESS, PORT_NUM)
+                            Tcp_Write(str(midpoint)+'~')
+                            s.settimeout(2)
+                            print('midpoint: ',midpoint)
+                            try: 
+                                confirmation = Tcp_ReadNew()
+                                if(confirmation == "Recording"):
+                                    print('recording video')
+                                    if(not os.path.exists(".\\tests\\" + name)):
+                                        os.makedirs(".\\tests\\" + name + "\\")
+                                    disconnect(boardName)
+                                    return True
+                                else:
+                                    disconnect(boardName)
+                                    return "Error in giving the name"
+                            except socket.timeout:
+                                disconnect(boardName)
+                                return "Error in giving midpoint"
                         else:
                             disconnect(boardName)
-                            return "Error in giving the name"
+                            return "Error in giving midpoint"
                     except socket.timeout:
                         disconnect(boardName)
                         return "Error in giving the name"
@@ -197,7 +206,7 @@ def startVideo(boardName, t, name):
 def getCsv(boardName, name):
     connectForAction(boardName)
     Tcp_connect( HOST_IP_ADDRESS, PORT_NUM)
-    Tcp_Write(name + "/" + name + ".csv" + "~")
+    Tcp_Write("GET" + name + "/" + name + ".csv" + "~")
     text = '.\\tests\\' + name
     if(not os.path.exists(text)):
         os.makedirs(".\\tests\\" + name + "\\")
@@ -219,7 +228,7 @@ def getCsv(boardName, name):
 def getVideo(boardName, name):
     connectForAction(boardName)
     Tcp_connect( HOST_IP_ADDRESS, PORT_NUM)
-    Tcp_Write(name + "/" + name + ".mp4" + "~")
+    Tcp_Write("GET" + name + "/" + name + ".mp4" + "~")
     text = '.\\tests\\' + name
     if(not os.path.exists(text)):
         os.makedirs(".\\tests\\" + name + "\\")
@@ -243,13 +252,12 @@ def getDone(boardName):
     connectForAction(boardName)
     Tcp_connect( HOST_IP_ADDRESS, PORT_NUM)
     Tcp_Write('Get Completed'+'~')
-    numDone = int(Tcp_ReadNew())
+    done = Tcp_ReadNew()
     
-    print(numDone)
-    while (numDone > 0):        
-        numDone = numDone - 1
+    doneList = done.split('?')
+    print(doneList)
     disconnect(boardName)
-    return True
+    return doneList
     
     
 def Tcp_Close( ):
@@ -304,18 +312,31 @@ def saveCompletedTest(c):
         
 def giveCoords(array):
     return
+
 #print(connectToBoard("Tank01"))
 #print(connectToBoard("Tank01"))
 # =============================================================================
-# print(getPicture("Tank01"))
+#print(getPicture("Tank01"))
 # time.sleep(5)
-# =============================================================================
-# =============================================================================
-# print(startVideo("Tank01",60,"newestTest"))
-# =============================================================================
-# =============================================================================
+#print(startVideo("Tank01",20,"newerTest",0.25))
 # time.sleep(20)
 # =============================================================================
-#print(getVideo("Tank01","newestTest"))
+# =============================================================================
+# endPoints.endPoints('newestTest','newestTest',path=".\\tests\\newestTest\\")
+# =============================================================================
+# =============================================================================
+# theseDone = getDone('Tank01')
+# for x in theseDone:
+#     if x != 'Failed' and x != 'Nothing Here':
+#         time.sleep(1)
+#         getVideo('Tank01',x)
+#         time.sleep(1)
+#         getCsv('Tank01',x)
+#         time.sleep(1)
+#         endPoints.endPoints(x,x,path=".\\tests\\")
+# =============================================================================
+#print(getVideo("Tank01","newerTest"))
+#print(getCsv("Tank01","newerTest"))
+#endPoints.endPoints('newerTest','newerTest',path=".\\tests\\"+'newerTest\\')
 
 #print(connectNetwork("It Hurts When IP"))

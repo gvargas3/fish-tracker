@@ -231,11 +231,12 @@ $('#content-holder').on('test-page-load', function(){
     if(valid)
     {
       var seconds = 3600*Number($('#hours').val()) + 60*$('#minutes').val();
+      var name = $('#name').val();
       console.log('currentBoard', currentBoard);
       console.log('time', seconds);
-      console.log('name:', $('#name').val());
       $('#content-holder').load('html/box-draw.html', function(){
-        loadDraw(currentBoard, seconds, $('#name').val());
+        console.log('name:', name);
+        loadDraw(currentBoard, seconds, name);
       });
       
       // client.invoke("startVideo", currentBoard, seconds, $('#name').val(), (error, res) => {
@@ -254,6 +255,7 @@ $('#content-holder').on('test-page-load', function(){
 /******************************* Box draw functionality **************************************************************/
 var loadDraw = function(board,time,name){
   $('.loader').show();
+  console.log('Current Board:',currentBoard)
   client.invoke("getPicture", currentBoard, (error, filepath) => {
     if(error) 
     {
@@ -261,7 +263,9 @@ var loadDraw = function(board,time,name){
     } 
     else 
     {
+      filepath = 'Python\\tests\\frame.jpg'
       console.log('filepath:',filepath)
+      
       $('.loader').hide();
       $('#screenshot').attr('src', filepath);
       initDraw($('#canvas'));
@@ -273,14 +277,14 @@ var loadDraw = function(board,time,name){
           var imagePercent = ($('.set')[0].getBoundingClientRect().top - $('#screenshot')[0].getBoundingClientRect().top)/$('#screenshot').height();
           console.log('Image percent: ', imagePercent);
           var coords = [['10', '20'],['40','60']];
-          client.invoke("giveCoords", coords, (error, isGood) => {
+          client.invoke("startVideo", currentBoard, time, name, imagePercent, (error, isGood) => {
             if(error) 
             {
               console.error(error)
             }
             else
             {
-              console.log('coordinates set:', isGood);
+              console.log('Video started:', isGood);
             }
           })
         }
