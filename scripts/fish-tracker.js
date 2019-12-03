@@ -12,7 +12,7 @@ client.invoke("getCurrentNetwork", (error, network) => {
   else 
   {
     currentNetwork = network;
-    currentBoard = '';
+    currentBoard = '1';
     console.log('Current network:', currentNetwork);
   }
 });
