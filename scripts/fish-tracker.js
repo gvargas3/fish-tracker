@@ -12,7 +12,7 @@ client.invoke("getCurrentNetwork", (error, network) => {
   else 
   {
     currentNetwork = network;
-    currentBoard = '';
+    currentBoard = '1';
     console.log('Current network:', currentNetwork);
   }
 });
@@ -199,6 +199,13 @@ $('#content-holder').on('connections-load', function(){
           if(message == 'connected')
           {
             console.log('Connection succeeded')
+            $('.nav-item').removeClass('active');
+            $('#alert-div').removeClass('active');
+            $('#home-nav').parent().addClass('active');
+
+            $('#content-holder').load('html/home.html', function(){
+              $('#content-holder').trigger('home-load');
+            });
           }
           else
           {
@@ -285,6 +292,13 @@ var loadDraw = function(board,time,name){
             else
             {
               console.log('Video started:', isGood);
+              $('.nav-item').removeClass('active');
+              $('#alert-div').removeClass('active');
+              $('#home-nav').parent().addClass('active');
+
+              $('#content-holder').load('html/home.html', function(){
+                $('#content-holder').trigger('home-load');
+              });
             }
           })
         }
