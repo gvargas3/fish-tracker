@@ -47,6 +47,11 @@ class CalcApi(object):
             return fileManip.getDataFromFile(path,fileType)
         except Exception as e:
             return e
+    def downloadResults(self):
+        try:
+            return pm.downloadResults()
+        except Exception as e:
+            return e
     def echo(self, text):
         print('called Echo method')
         """echo any text"""
