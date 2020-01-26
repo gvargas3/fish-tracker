@@ -11,7 +11,6 @@ import matplotlib.collections as mcoll
 import matplotlib.path as mpath
 import matplotlib
 import os
-import bisect
 
 # change this path or add one
 DEBUG_PATH = "fish-tracker/"
@@ -164,4 +163,4 @@ def endPoints(fileName, outputName, path="", fileType="csv"):
 
 #endPoints(newestTest", "newestTest", fileType="csv")
 #endPoints("sample2", "newTestes", fileType= "txt")
-#endPoints("newestTest", "newTestes", path=".\\tests\\newestTest\\",fileType= "csv")
+#endPoints("TEST4", "TEST4", path=".\\tests\\TEST1\\",fileType= "csv")

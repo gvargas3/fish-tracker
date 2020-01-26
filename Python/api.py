@@ -1,21 +1,10 @@
 from __future__ import print_function
-#from calc import calc as real_calc
 import pythonMethods as pm
-#import giveCoords as coords
 import fileManipulation as fileManip
 import sys
 import zerorpc
 
 class CalcApi(object):
-# =============================================================================
-#     def calc(self, text):
-#         """based on the input text, return the int result"""
-#         try:
-#             print('In calculator')
-#             return real_calc(text)
-#         except:
-#             return 0.0
-# =============================================================================
     def getConnections(self):
         try:
             return pm.getConnections(self)
