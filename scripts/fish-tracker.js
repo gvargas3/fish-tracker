@@ -69,6 +69,25 @@ $('#connections-nav').click(function()
   }
 });
 
+$('#results-nav').click(function()
+{
+  if(!$('#results-nav').parent().is('.active'))
+  {
+    $('#alert-div').removeClass('active');
+    console.log('results clicked');
+    client.invoke("downloadResults", (error, res) => {
+      if(error) 
+      {
+        console.error(error);
+      } 
+      else 
+      {
+        console.log('Download results test called');
+      }
+    });
+  }
+});
+
 $('#alert-div').click(function()
 {
   if(!$('#alert-div').is('.active'))
