@@ -22,11 +22,6 @@ class CalcApi(object):
             print('tried')
         except Exception as e:
             return e
-    def giveCoords(self, array):
-        try:
-            return pm.giveCoords(array)
-        except Exception as e:
-            return e
     def getCurrentNetwork(self):
         try:
             return pm.getCurrentNetwork()
